@@ -17,4 +17,6 @@ setup(name='Mancala',
       packages=find_packages(),
       install_requires=['blessings',
                         'tabulate'],
+      tests_require=['pytest',
+                     ],
       zip_safe=False)
