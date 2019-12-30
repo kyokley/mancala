@@ -18,5 +18,7 @@ setup(name='Mancala',
       install_requires=['blessings',
                         'tabulate'],
       tests_require=['pytest',
+                     'black',
+                     'bpython',
                      ],
       zip_safe=False)
