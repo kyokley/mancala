@@ -9,6 +9,10 @@ def generate_sequence(number_of_items):
     while count < number_of_items:
         if count < alphabet_length:
             sequence.append(alphabet[count])
+        else:
+            cycle = count // alphabet_length
+            prefix = sequence[cycle - 1]
+            sequence.append(f'{prefix}{alphabet[count % alphabet_length]}')
 
         count += 1
 
