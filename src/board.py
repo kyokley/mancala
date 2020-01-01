@@ -20,7 +20,7 @@ class Board:
 
     def _letter_to_index(self, letter):
         letter_sequence = generate_sequence(len(self.cups) - 2)
-        for i in range(len(self.cups)):
+        for i in range(len(self.cups) / 2):
             if i == 0 or i == self.total_number_of_cups / 2:
                 continue
 
