@@ -2,6 +2,9 @@ alphabet = 'abcdefghijklmnopqrstuvwxyz'
 
 
 def generate_sequence(number_of_items):
+    if number_of_items <= 0:
+        raise ValueError(f'number_of_items must be positive. Got {number_of_items}.')
+
     alphabet_length = len(alphabet)
     sequence = []
 

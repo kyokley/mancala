@@ -1,3 +1,5 @@
+.PHONY: autoformat
+
 autoformat:
-    find . -name '*.py' | xargs isort
-    find . -name '*.py' | xargs black -S
+	git ls-files | grep -P '\.py$$' | xargs isort
+	git ls-files | grep -P '\.py$$' | xargs black -S
