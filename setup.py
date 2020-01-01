@@ -20,5 +20,6 @@ setup(name='Mancala',
       tests_require=['pytest',
                      'black',
                      'bpython',
+                     'isort',
                      ],
       zip_safe=False)
