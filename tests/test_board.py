@@ -138,8 +138,10 @@ class TestSow:
             4,  # h
             4,  # g
         ]
-        self.board.sow('a')
+        last_cup = self.board.sow('a')
+
         assert expected == self.board.cups
+        assert last_cup == 5
 
     def test_sow_in_bottom_row(self):
         expected = [
@@ -158,8 +160,10 @@ class TestSow:
             5,  # h
             5,  # g
         ]
-        self.board.sow('k')
+        last_cup = self.board.sow('k')
+
         assert expected == self.board.cups
+        assert last_cup == 13
 
     def test_sow_wraps_around_left(self):
         expected = [
@@ -178,8 +182,10 @@ class TestSow:
             0,  # h
             5,  # g
         ]
-        self.board.sow('h')
+        last_cup = self.board.sow('h')
+
         assert expected == self.board.cups
+        assert last_cup == 2
 
     def test_sow_wraps_around_right(self):
         expected = [
@@ -198,5 +204,7 @@ class TestSow:
             4,  # h
             4,  # g
         ]
-        self.board.sow('f')
+        last_cup = self.board.sow('f')
+
         assert expected == self.board.cups
+        assert last_cup == 10
