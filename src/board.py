@@ -1,4 +1,5 @@
 from src.utils import generate_sequence
+from blessings import Terminal
 
 
 class InvalidCup(Exception):
@@ -20,6 +21,7 @@ class Board:
             15  14  13  12  11  10  9
             h   i   j   k   l   m   n
         """
+        self.term = Terminal()
         self.side_length = side_length
         self.total_number_of_cups = self.side_length * 2 + 2
         self.cups = [0] * self.total_number_of_cups
@@ -64,3 +66,20 @@ class Board:
             index += 1
             self.cups[index % len(self.cups)] += 1
             seeds -= 1
+
+        return index % len(self.cups)
+
+    def _clear_screen(self):
+        print(self.term.clear())
+
+    def _display_cups(self):
+        # Draw the top row
+        # Draw cup indices
+        print(self.term.move(10, 10), end='')
+        for key in self._index_dict:
+            print(key, end='')
+            print(self.term.move_right, end='')
+
+        # Draw player cups
+        # Draw bottom row
+        pass

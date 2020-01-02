@@ -17,6 +17,6 @@ setup(
     license='MIT',
     packages=find_packages(),
     install_requires=['blessings', 'tabulate'],
-    tests_require=['pytest', 'black', 'bpython', 'isort',],
+    tests_require=['pytest', 'black', 'bpython', 'isort'],
     zip_safe=False,
 )
