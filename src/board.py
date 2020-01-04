@@ -1,5 +1,5 @@
+from src.terminal import Location, Terminal
 from src.utils import generate_sequence
-from blessings import Terminal
 
 
 class InvalidCup(Exception):
@@ -26,23 +26,55 @@ class Board:
         self.total_number_of_cups = self.side_length * 2 + 2
         self.cups = [0] * self.total_number_of_cups
 
-        self._build_index_dict()
+        self._INITIAL_LOCATION = Location(10, 10)
+        self._SPACER = Location(0, 4)
+        self._TOP_ROW_LOCATION = self._INITIAL_LOCATION + self._SPACER
+        self._PLAYER_ROW = self._INITIAL_LOCATION + Location(1, 0)
+        self._BOTTOM_ROW_LOCATION = self._PLAYER_ROW + self._SPACER + Location(1, 0)
+
+        self._build_index_dicts()
+
+    @property
+    def top_row(self):
+        return self.cups[1 : self._midpoint]
+
+    @property
+    def top_row_indices(self):
+        return [i for i in range(1, self._midpoint)]
+
+    @property
+    def top_row_cups(self):
+        return sorted([self._index_to_cup[idx] for idx in self.top_row_indices])
+
+    @property
+    def bottom_row(self):
+        return self.cups[self._midpoint + 1 :]
+
+    @property
+    def bottom_row_indices(self):
+        return [i for i in range(self._midpoint + 1, len(self.cups))]
+
+    @property
+    def bottom_row_cups(self):
+        return sorted([self._index_to_cup[idx] for idx in self.bottom_row_indices])
 
     @property
     def _midpoint(self):
         return len(self.cups) // 2
 
-    def _build_index_dict(self):
-        self._index_dict = dict()
+    def _build_index_dicts(self):
+        self._cup_to_index = dict()
         letter_sequence = generate_sequence(len(self.cups) - 2)
 
         for i in range(1, self._midpoint):
             letter = letter_sequence.pop(0)
-            self._index_dict[letter] = i
+            self._cup_to_index[letter] = i
 
         for i in range(len(self.cups) - 1, self._midpoint, -1):
             letter = letter_sequence.pop(0)
-            self._index_dict[letter] = i
+            self._cup_to_index[letter] = i
+
+        self._index_to_cup = {v: k for k, v in self._cup_to_index.items()}
 
     def initialize_cups(self, seeds):
         for i in range(len(self.cups)):
@@ -52,10 +84,10 @@ class Board:
             self.cups[i] = seeds
 
     def sow(self, cup):
-        if cup not in self._index_dict:
+        if cup not in self._cup_to_index:
             raise InvalidCup(f'Invalid cup. Got {cup}.')
 
-        index = self._index_dict[cup]
+        index = self._cup_to_index[cup]
         seeds = self.cups[index]
 
         if seeds == 0:
@@ -70,16 +102,23 @@ class Board:
         return index % len(self.cups)
 
     def _clear_screen(self):
-        print(self.term.clear())
+        self.term.clear()
 
     def _display_cups(self):
         # Draw the top row
         # Draw cup indices
-        print(self.term.move(10, 10), end='')
-        for key in self._index_dict:
-            print(key, end='')
-            print(self.term.move_right, end='')
+        current_location = self._TOP_ROW_LOCATION
+
+        for key in self.top_row_cups:
+            self.term.move(*current_location)
+            self.term.display(key)
+            current_location += self._SPACER
 
         # Draw player cups
         # Draw bottom row
-        pass
+        current_location = self._BOTTOM_ROW_LOCATION
+
+        for key in self.bottom_row_cups:
+            self.term.move(*current_location)
+            self.term.display(key)
+            current_location += self._SPACER

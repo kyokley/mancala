@@ -3,12 +3,12 @@ import pytest
 from src.board import Board
 
 
-class TestIndexDict:
+class TestBuildIndexDicts:
     def test_seven_cups(self):
         side_length = 7
         board = Board(side_length)
 
-        expected = {
+        expected_cup_to_index = {
             'a': 1,
             'b': 2,
             'c': 3,
@@ -24,13 +24,39 @@ class TestIndexDict:
             'm': 10,
             'n': 9,
         }
-        assert expected == board._index_dict
+        assert expected_cup_to_index == board._cup_to_index
+
+        expected_index_to_cup = {
+            1: 'a',
+            2: 'b',
+            3: 'c',
+            4: 'd',
+            5: 'e',
+            6: 'f',
+            7: 'g',
+            15: 'h',
+            14: 'i',
+            13: 'j',
+            12: 'k',
+            11: 'l',
+            10: 'm',
+            9: 'n',
+        }
+        assert expected_index_to_cup == board._index_to_cup
+
+        assert board.top_row_indices == [1, 2, 3, 4, 5, 6, 7]
+        assert board.top_row_cups == ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+        assert board.top_row == [0, 0, 0, 0, 0, 0, 0]
+
+        assert board.bottom_row_indices == [9, 10, 11, 12, 13, 14, 15]
+        assert board.bottom_row_cups == ['h', 'i', 'j', 'k', 'l', 'm', 'n']
+        assert board.bottom_row == [0, 0, 0, 0, 0, 0, 0]
 
     def test_six_cups(self):
         side_length = 6
         board = Board(side_length)
 
-        expected = {
+        expected_cup_to_index = {
             'a': 1,
             'b': 2,
             'c': 3,
@@ -44,7 +70,60 @@ class TestIndexDict:
             'k': 9,
             'l': 8,
         }
-        assert expected == board._index_dict
+        assert expected_cup_to_index == board._cup_to_index
+
+        expected_index_to_cup = {
+            1: 'a',
+            2: 'b',
+            3: 'c',
+            4: 'd',
+            5: 'e',
+            6: 'f',
+            13: 'g',
+            12: 'h',
+            11: 'i',
+            10: 'j',
+            9: 'k',
+            8: 'l',
+        }
+        assert expected_index_to_cup == board._index_to_cup
+
+        assert board.top_row_indices == [1, 2, 3, 4, 5, 6]
+        assert board.top_row_cups == [
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+        ]
+
+        assert board.top_row == [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ]
+
+        assert board.bottom_row_indices == [
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+        ]
+        assert board.bottom_row_cups == [
+            'g',
+            'h',
+            'i',
+            'j',
+            'k',
+            'l',
+        ]
+        assert board.bottom_row == [0, 0, 0, 0, 0, 0]
 
 
 class TestInitializeCups:
