@@ -1,4 +1,4 @@
-from src.board import Board
+from src.board import Board, EmptyCup, InvalidCup
 from src.player import HumanPlayer
 from src.terminal import Location, Terminal
 
@@ -25,7 +25,11 @@ class Game:
             self.board.clear_screen()
             self.board.display_cups()
 
-            last_cup = self.current_player.take_turn()
+            try:
+                last_cup = self.current_player.take_turn()
+            except (EmptyCup, InvalidCup):
+                continue
+
             if self.current_player == self.player1:
                 if last_cup != self.board.player_1_cup_index:
                     self.current_player = self.player2
