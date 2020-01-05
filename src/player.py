@@ -2,9 +2,7 @@ from src.terminal import Location, Terminal
 
 
 class Player:
-    def __init__(self,
-                 name,
-                 board):
+    def __init__(self, name, board):
         self.term = Terminal()
         self.name = name
         self.board = board

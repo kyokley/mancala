@@ -1,6 +1,6 @@
 from src.board import Board
-from src.terminal import Location, Terminal
 from src.player import HumanPlayer
+from src.terminal import Location, Terminal
 
 
 class Game:

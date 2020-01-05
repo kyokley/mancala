@@ -1,4 +1,5 @@
 import itertools
+
 from src.terminal import Location, Terminal
 from src.utils import generate_sequence
 
