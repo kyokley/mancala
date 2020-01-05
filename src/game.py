@@ -20,8 +20,7 @@ class Game:
         self.player1 = HumanPlayer('Player1', self.board)
         self.player2 = HumanPlayer('Player2', self.board)
         self.current_player = self.player1
-        self._players = (self.player1,
-                         self.player2)
+        self._players = (self.player1, self.player2)
 
     def _get_initial_seeds(self):
         seeds = input('Enter the initial number of seeds per cup: ')
