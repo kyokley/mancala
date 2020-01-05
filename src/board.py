@@ -1,3 +1,4 @@
+import itertools
 from src.terminal import Location, Terminal
 from src.utils import generate_sequence
 
@@ -71,12 +72,20 @@ class Board:
         return sorted([self._index_to_cup[idx] for idx in self.bottom_row_indices])
 
     @property
+    def player_1_cup_index(self):
+        return 0
+
+    @property
+    def player_2_cup_index(self):
+        return self._midpoint
+
+    @property
     def player_1_cup(self):
-        return self.cups[0]
+        return self.cups[self.player_1_cup_index]
 
     @property
     def player_2_cup(self):
-        return self.cups[self._midpoint]
+        return self.cups[self.player_2_cup_index]
 
     @property
     def _midpoint(self):
@@ -96,12 +105,15 @@ class Board:
 
         self._index_to_cup = {v: k for k, v in self._cup_to_index.items()}
 
+    def done(self):
+        return all(val == 0 for val in itertools.chain(self.top_row, self.bottom_row))
+
     def initialize_cups(self, seeds):
         for i in range(len(self.cups)):
             if i == 0 or i == self._midpoint:
                 continue
 
-            self.cups[i] = seeds
+            self.cups[i] = int(seeds)
 
     def sow(self, cup):
         if cup not in self._cup_to_index:
@@ -121,10 +133,10 @@ class Board:
 
         return index % len(self.cups)
 
-    def _clear_screen(self):
+    def clear_screen(self):
         self.term.clear()
 
-    def _display_cups(self):
+    def display_cups(self):
         self.term.move(self._PLAYER_1_LOCATION)
         self.term.display(self.player_1_cup)
 

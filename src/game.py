@@ -13,19 +13,26 @@ class Game:
 
         self.board = Board(side_length)
         self.board.initialize_cups(seeds)
-        self.board._clear_screen()
-        self.board._display_cups()
+        self.board.clear_screen()
+        self.board.display_cups()
 
-    def prompt(self):
-        self.term.move(Location(19, 0))
-        cup = input('Enter cup to sow: ')
-        self.board.sow(cup)
+        self.player1 = HumanPlayer('Player1', self.board)
+        self.player2 = HumanPlayer('Player2', self.board)
+        self.current_player = self.player1
 
     def run(self):
-        while True:
-            self.board._clear_screen()
-            self.board._display_cups()
-            self.prompt()
+        while not self.board.done():
+            self.board.clear_screen()
+            self.board.display_cups()
+
+            last_cup = self.current_player.take_turn()
+            if self.current_player == self.player1:
+                if last_cup != self.board.player_1_cup_index:
+                    self.current_player = self.player2
+            elif self.current_player == self.player2:
+                if last_cup != self.board.player_2_cup_index:
+                    self.current_player = self.player1
+        self.board.display_cups()
 
 
 if __name__ == '__main__':
