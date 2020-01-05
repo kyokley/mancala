@@ -32,8 +32,16 @@ class Terminal:
     def clear(self):
         self.display(self._term.clear())
 
-    def move(self, row, column):
-        self.display(self._term.move(row, column))
+    def move(self, row_or_location, column=None):
+        if isinstance(row_or_location, Location):
+            if column is not None:
+                raise ValueError('column cannot be provided with a Location')
+
+            self.display(self._term.move(*row_or_location))
+        elif column is None:
+            raise ValueError('column must be provided when used without a Location')
+        else:
+            self.display(self._term.move(row_or_location, column))
 
     def move_right(self):
         self.display(self._term.move_right)

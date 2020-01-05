@@ -125,10 +125,10 @@ class Board:
         self.term.clear()
 
     def _display_cups(self):
-        self.term.move(*self._PLAYER_1_LOCATION)
+        self.term.move(self._PLAYER_1_LOCATION)
         self.term.display(self.player_1_cup)
 
-        self.term.move(*self._PLAYER_2_LOCATION)
+        self.term.move(self._PLAYER_2_LOCATION)
         self.term.display(self.player_2_cup)
 
         # Draw the top row
@@ -136,14 +136,14 @@ class Board:
         current_location = self._TOP_ROW_INDICES_LOCATION
 
         for key in self.top_row_cups:
-            self.term.move(*current_location)
+            self.term.move(current_location)
             self.term.display(key)
             current_location += self._HORIZONTAL_SPACER
 
         current_location = self._TOP_ROW_LOCATION
 
         for val in self.top_row:
-            self.term.move(*current_location)
+            self.term.move(current_location)
             self.term.display(val)
             current_location += self._HORIZONTAL_SPACER
 
@@ -152,13 +152,13 @@ class Board:
         current_location = self._BOTTOM_ROW_LOCATION
 
         for val in reversed(self.bottom_row):
-            self.term.move(*current_location)
+            self.term.move(current_location)
             self.term.display(val)
             current_location += self._HORIZONTAL_SPACER
 
         current_location = self._BOTTOM_ROW_INDICES_LOCATION
 
         for key in self.bottom_row_cups:
-            self.term.move(*current_location)
+            self.term.move(current_location)
             self.term.display(key)
             current_location += self._HORIZONTAL_SPACER
