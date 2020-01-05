@@ -9,9 +9,10 @@ class Game:
 
         self.term.clear()
         self.term.move(Location(5, 5))
-        seeds = input('Enter the initial number of seeds per cup: ')
 
         self.board = Board(side_length)
+
+        seeds = self._get_initial_seeds()
         self.board.initialize_cups(seeds)
         self.board.clear_screen()
         self.board.display_cups()
@@ -19,6 +20,12 @@ class Game:
         self.player1 = HumanPlayer('Player1', self.board)
         self.player2 = HumanPlayer('Player2', self.board)
         self.current_player = self.player1
+        self._players = (self.player1,
+                         self.player2)
+
+    def _get_initial_seeds(self):
+        seeds = input('Enter the initial number of seeds per cup: ')
+        return seeds
 
     def run(self):
         while not self.board.done():
