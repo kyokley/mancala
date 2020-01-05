@@ -30,19 +30,26 @@ class Game:
             except (EmptyCup, InvalidCup):
                 continue
 
-            if self.current_player == self.player1:
-                if last_cup != self.board.player_1_cup_index:
-                    self.current_player = self.player2
-            elif self.current_player == self.player2:
-                if last_cup != self.board.player_2_cup_index:
-                    self.current_player = self.player1
+            self._determine_next_player(last_cup)
         self.board.display_cups()
 
+    def _determine_next_player(self, last_cup):
+        if self.current_player == self.player1:
+            if last_cup != self.board.player_1_cup_index:
+                self.current_player = self.player2
+        elif self.current_player == self.player2:
+            if last_cup != self.board.player_2_cup_index:
+                self.current_player = self.player1
 
-if __name__ == '__main__':
+
+def main():
     game = Game()
 
     try:
         game.run()
     except KeyboardInterrupt:
         pass
+
+
+if __name__ == '__main__':
+    main()
