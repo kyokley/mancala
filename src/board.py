@@ -27,10 +27,22 @@ class Board:
         self.cups = [0] * self.total_number_of_cups
 
         self._INITIAL_LOCATION = Location(10, 10)
-        self._SPACER = Location(0, 4)
-        self._TOP_ROW_LOCATION = self._INITIAL_LOCATION + self._SPACER
-        self._PLAYER_ROW = self._INITIAL_LOCATION + Location(1, 0)
-        self._BOTTOM_ROW_LOCATION = self._PLAYER_ROW + self._SPACER + Location(1, 0)
+        self._HORIZONTAL_SPACER = Location(0, 4)
+
+        self._TOP_ROW_INDICES_LOCATION = (
+            self._INITIAL_LOCATION + self._HORIZONTAL_SPACER
+        )
+        self._TOP_ROW_LOCATION = self._TOP_ROW_INDICES_LOCATION + Location(1, 0)
+
+        self._PLAYER_1_LOCATION = self._INITIAL_LOCATION + Location(2, 0)
+        self._PLAYER_2_LOCATION = self._PLAYER_1_LOCATION + Location(
+            0, self._HORIZONTAL_SPACER.column * (self.side_length + 1)
+        )
+
+        self._BOTTOM_ROW_LOCATION = (
+            self._PLAYER_1_LOCATION + self._HORIZONTAL_SPACER + Location(1, 0)
+        )
+        self._BOTTOM_ROW_INDICES_LOCATION = self._BOTTOM_ROW_LOCATION + Location(1, 0)
 
         self._build_index_dicts()
 
@@ -57,6 +69,14 @@ class Board:
     @property
     def bottom_row_cups(self):
         return sorted([self._index_to_cup[idx] for idx in self.bottom_row_indices])
+
+    @property
+    def player_1_cup(self):
+        return self.cups[0]
+
+    @property
+    def player_2_cup(self):
+        return self.cups[self._midpoint]
 
     @property
     def _midpoint(self):
@@ -105,20 +125,40 @@ class Board:
         self.term.clear()
 
     def _display_cups(self):
+        self.term.move(*self._PLAYER_1_LOCATION)
+        self.term.display(self.player_1_cup)
+
+        self.term.move(*self._PLAYER_2_LOCATION)
+        self.term.display(self.player_2_cup)
+
         # Draw the top row
         # Draw cup indices
-        current_location = self._TOP_ROW_LOCATION
+        current_location = self._TOP_ROW_INDICES_LOCATION
 
         for key in self.top_row_cups:
             self.term.move(*current_location)
             self.term.display(key)
-            current_location += self._SPACER
+            current_location += self._HORIZONTAL_SPACER
+
+        current_location = self._TOP_ROW_LOCATION
+
+        for val in self.top_row:
+            self.term.move(*current_location)
+            self.term.display(val)
+            current_location += self._HORIZONTAL_SPACER
 
         # Draw player cups
         # Draw bottom row
         current_location = self._BOTTOM_ROW_LOCATION
 
+        for val in self.bottom_row:
+            self.term.move(*current_location)
+            self.term.display(val)
+            current_location += self._HORIZONTAL_SPACER
+
+        current_location = self._BOTTOM_ROW_INDICES_LOCATION
+
         for key in self.bottom_row_cups:
             self.term.move(*current_location)
             self.term.display(key)
-            current_location += self._SPACER
+            current_location += self._HORIZONTAL_SPACER
