@@ -151,7 +151,7 @@ class Board:
         # Draw bottom row
         current_location = self._BOTTOM_ROW_LOCATION
 
-        for val in self.bottom_row:
+        for val in reversed(self.bottom_row):
             self.term.move(*current_location)
             self.term.display(val)
             current_location += self._HORIZONTAL_SPACER
