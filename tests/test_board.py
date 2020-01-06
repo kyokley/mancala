@@ -1,6 +1,6 @@
 import pytest
 
-from src.board import Board
+from src.board import Board, EmptyCup, InvalidCup
 
 
 class TestBuildIndexDicts:
@@ -287,3 +287,33 @@ class TestSow:
 
         assert expected == self.board.cups
         assert last_cup == 10
+
+    def test_invalid_cup_raises(self):
+        with pytest.raises(InvalidCup):
+            self.board.sow('asdf')
+
+    def test_empty_cup_raises(self):
+        self.board.initialize_cups(0)
+
+        with pytest.raises(EmptyCup):
+            self.board.sow('a')
+
+
+class TestDone:
+    @pytest.fixture(autouse=True)
+    def setUp(self):
+        self.side_length = 6
+        self.board = Board(self.side_length)
+        self.board.initialize_cups(4)
+
+    def test_not_done(self):
+        assert not self.board.done()
+
+    def test_done(self):
+        for i in range(len(self.board.cups)):
+            self.board.cups[i] = 0
+
+        self.board.cups[self.board.player_1_cup_index] = 10
+        self.board.cups[self.board.player_2_cup_index] = 15
+
+        assert self.board.done()

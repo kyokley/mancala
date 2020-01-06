@@ -1,5 +1,5 @@
 from src.board import Board, EmptyCup, InvalidCup
-from src.player import HumanPlayer
+from src.player import RandomPlayer
 from src.terminal import Location, Terminal
 
 
@@ -17,8 +17,8 @@ class Game:
         self.board.clear_screen()
         self.board.display_cups()
 
-        self.player1 = HumanPlayer('Player1', self.board)
-        self.player2 = HumanPlayer('Player2', self.board)
+        self.player1 = RandomPlayer('Player1', self.board, wait_time=0.5)
+        self.player2 = RandomPlayer('Player2', self.board, wait_time=0.5)
         self.current_player = self.player1
         self._players = (self.player1, self.player2)
 
@@ -32,12 +32,22 @@ class Game:
             self.board.display_cups()
 
             try:
-                last_cup = self.current_player.take_turn()
+                cup = self.current_player.take_turn()
+                last_cup = self.board.sow(cup)
             except (EmptyCup, InvalidCup):
                 continue
 
             self._determine_next_player(last_cup)
         self.board.display_cups()
+
+        print()
+        print()
+        if self.board.player_1_cup > self.board.player_2_cup:
+            print(f'{self.player1.name} Wins!')
+        elif self.board.player_1_cup < self.board.player_2_cup:
+            print(f'{self.player2.name} Wins!')
+        else:
+            print('Tie game!')
 
     def _determine_next_player(self, last_cup):
         if self.current_player == self.player1:

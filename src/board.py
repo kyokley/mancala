@@ -92,6 +92,9 @@ class Board:
     def _midpoint(self):
         return len(self.cups) // 2
 
+    def cup_seeds(self, cup):
+        return self.cups[self._cup_to_index[cup]]
+
     def _build_index_dicts(self):
         self._cup_to_index = dict()
         letter_sequence = generate_sequence(len(self.cups) - 2)
