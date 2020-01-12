@@ -18,6 +18,21 @@ class Location:
 
         return self.__class__(new_x, new_y)
 
+    def __sub__(self, other):
+        new_x = self.row - other.row
+        new_y = self.column - other.column
+
+        return self.__class__(new_x, new_y)
+
+    def __rmul__(self, other):
+        if isinstance(other, int):
+            new_x = other * self.row
+            new_y = other * self.column
+        else:
+            raise ValueError('Multiplication not supported for {type(other)}({other}).')
+
+        return self.__class__(new_x, new_y)
+
     def __getitem__(self, index):
         return (self.row, self.column)[index]
 
@@ -26,8 +41,35 @@ class Terminal:
     def __init__(self):
         self._term = BlessingsTerm()
 
-    def display(self, val):
+    def __getattribute__(self, name):
+        if name in (
+            'black',
+            'red',
+            'green',
+            'yellow',
+            'blue',
+            'magenta',
+            'cyan',
+            'white',
+            'bold',
+            'reverse',
+            'underline',
+            'no_underline',
+            'blink',
+            'normal'
+        ):
+            return getattr(self._term, name)
+        else:
+            return super().__getattribute__(name)
+
+    def display(self, val, color=None):
+        if color:
+            print(color, end='')
+
         print(val, end='')
+
+        if color:
+            print(self._term.normal, end='')
 
     def clear(self):
         self.display(self._term.clear())

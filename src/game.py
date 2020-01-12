@@ -14,11 +14,11 @@ class Game:
 
         seeds = self._get_initial_seeds()
         self.board.initialize_cups(seeds)
-        self.board.clear_screen()
+        self.board.clear_board()
         self.board.display_cups()
 
-        self.player1 = RandomPlayer('Player1', self.board, wait_time=0.5)
-        self.player2 = RandomPlayer('Player2', self.board, wait_time=0.5)
+        self.player1 = RandomPlayer('Player1', self.board, wait_time=0.5, color=self.term.bold + self.term.red)
+        self.player2 = RandomPlayer('Player2', self.board, wait_time=0.5, color=self.term.bold + self.term.blue)
         self.current_player = self.player1
         self._players = (self.player1, self.player2)
 
@@ -26,18 +26,23 @@ class Game:
         seeds = input('Enter the initial number of seeds per cup: ')
         return seeds
 
+    def clear_screen(self):
+        self.term.clear()
+
     def run(self):
+        self.clear_screen()
         while not self.board.done():
-            self.board.clear_screen()
+            self.board.clear_board()
             self.board.display_cups()
 
             try:
                 cup = self.current_player.take_turn()
-                last_cup = self.board.sow(cup)
+                last_cup = self.board.sow(cup, color=self.current_player.color)
             except (EmptyCup, InvalidCup):
                 continue
 
             self._determine_next_player(last_cup)
+            self.clear_screen()
         self.board.display_cups()
 
         print()

@@ -1,7 +1,12 @@
 import itertools
+import time
 
+from collections import namedtuple
 from src.terminal import Location, Terminal
 from src.utils import generate_sequence
+
+
+Indicator = namedtuple('Indicator', 'location symbol')
 
 
 class InvalidCup(Exception):
@@ -13,7 +18,7 @@ class EmptyCup(Exception):
 
 
 class Board:
-    def __init__(self, side_length):
+    def __init__(self, side_length, animation_wait=1):
         """
         Indexes and their associated letters:
 
@@ -28,15 +33,18 @@ class Board:
         self.total_number_of_cups = self.side_length * 2 + 2
         self.cups = [0] * self.total_number_of_cups
 
+        self._ANIMATION_WAIT = animation_wait
+
         self._INITIAL_LOCATION = Location(10, 10)
         self._HORIZONTAL_SPACER = Location(0, 4)
 
+        self._TOP_ROW_INDICATOR_LOCATION = self._INITIAL_LOCATION + self._HORIZONTAL_SPACER
         self._TOP_ROW_INDICES_LOCATION = (
-            self._INITIAL_LOCATION + self._HORIZONTAL_SPACER
+            self._TOP_ROW_INDICATOR_LOCATION + Location(1, 0)
         )
         self._TOP_ROW_LOCATION = self._TOP_ROW_INDICES_LOCATION + Location(1, 0)
 
-        self._PLAYER_1_LOCATION = self._INITIAL_LOCATION + Location(2, 0)
+        self._PLAYER_1_LOCATION = Location(self._TOP_ROW_LOCATION.row + 1, self._INITIAL_LOCATION.column)
         self._PLAYER_2_LOCATION = self._PLAYER_1_LOCATION + Location(
             0, self._HORIZONTAL_SPACER.column * (self.side_length + 1)
         )
@@ -45,8 +53,28 @@ class Board:
             self._PLAYER_1_LOCATION + self._HORIZONTAL_SPACER + Location(1, 0)
         )
         self._BOTTOM_ROW_INDICES_LOCATION = self._BOTTOM_ROW_LOCATION + Location(1, 0)
+        self._BOTTOM_ROW_INDICATOR_LOCATION = self._BOTTOM_ROW_INDICES_LOCATION + Location(1, 0)
+
+        self._PLAYER_1_INDICATOR = self._PLAYER_1_LOCATION - self._HORIZONTAL_SPACER
+        self._PLAYER_2_INDICATOR = self._PLAYER_2_LOCATION + self._HORIZONTAL_SPACER
 
         self._build_index_dicts()
+
+    @property
+    def max_row(self):
+        return self._BOTTOM_ROW_INDICATOR_LOCATION.row
+
+    @property
+    def max_column(self):
+        return self._PLAYER_2_INDICATOR.column
+
+    @property
+    def min_row(self):
+        return self._INITIAL_LOCATION.row
+
+    @property
+    def min_column(self):
+        return self._INITIAL_LOCATION.column
 
     @property
     def top_row(self):
@@ -97,6 +125,8 @@ class Board:
 
     def _build_index_dicts(self):
         self._cup_to_index = dict()
+        self._index_to_cup_indicator = dict()
+
         letter_sequence = generate_sequence(len(self.cups) - 2)
 
         for i in range(1, self._midpoint):
@@ -109,6 +139,21 @@ class Board:
 
         self._index_to_cup = {v: k for k, v in self._cup_to_index.items()}
 
+        for i in range(len(self.cups)):
+            if i == 0:  # Player1's cup
+                self._index_to_cup_indicator[i] = Indicator(self._PLAYER_1_INDICATOR, '>')
+            elif i < self._midpoint:  # Top row
+                self._index_to_cup_indicator[i] = Indicator((i - 1) * self._HORIZONTAL_SPACER + self._TOP_ROW_INDICATOR_LOCATION, 'v')
+            elif i == self._midpoint:  # Player2's cup
+                self._index_to_cup_indicator[i] = Indicator(self._PLAYER_2_INDICATOR, '<')
+            else:  # Bottom row cups
+                self._index_to_cup_indicator[i] = Indicator((len(self.cups) - i - 1) * self._HORIZONTAL_SPACER + self._BOTTOM_ROW_INDICATOR_LOCATION, '^')
+
+    def clear_indicators(self):
+        for idx, indicator in self._index_to_cup_indicator.items():
+            self.term.move(indicator.location)
+            self.term.display(' ')
+
     def done(self):
         return all(val == 0 for val in itertools.chain(self.top_row, self.bottom_row))
 
@@ -119,10 +164,11 @@ class Board:
 
             self.cups[i] = int(seeds)
 
-    def sow(self, cup):
+    def sow(self, cup, color=None):
         if cup not in self._cup_to_index:
             raise InvalidCup(f'Invalid cup. Got {cup}.')
 
+        self.clear_indicators()
         index = self._cup_to_index[cup]
         seeds = self.cups[index]
 
@@ -130,15 +176,37 @@ class Board:
             raise EmptyCup(f"Cup '{cup}' is empty.")
 
         self.cups[index] = 0
+        self._draw_indicator(index, color=color)
+        self.display_cups()
+        print()
+        time.sleep(self._ANIMATION_WAIT)
+
         while seeds:
             index += 1
             self.cups[index % len(self.cups)] += 1
             seeds -= 1
+            self.clear_board()
+            self.display_cups()
+            self._draw_indicator(index % len(self.cups), color=color)
+
+            print()
+            time.sleep(self._ANIMATION_WAIT)
 
         return index % len(self.cups)
 
-    def clear_screen(self):
-        self.term.clear()
+    def _draw_indicator(self, index, color=None):
+        indicator = self._index_to_cup_indicator[index]
+        self.term.move(indicator.location)
+        self.term.display(indicator.symbol, color=color)
+
+    def clear_board(self):
+        for row in range(self.min_row, self.max_row):
+            # Iterate to max_columns + 1 in case player2's cup has 10 or more seeds
+            for column in range(self.min_column, self.max_column + 1):
+                self.term.move(row, column)
+                self.term.display(' ')
+
+        self.clear_indicators()
 
     def display_cups(self):
         self.term.move(self._PLAYER_1_LOCATION)

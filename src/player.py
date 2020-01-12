@@ -9,10 +9,11 @@ rand = random.SystemRandom()
 
 
 class Player:
-    def __init__(self, name, board):
+    def __init__(self, name, board, color=None):
         self.term = Terminal()
         self.name = name
         self.board = board
+        self.color = color
 
     def take_turn(self):
         self.term.move(*Location(19, 0))
@@ -27,8 +28,8 @@ class HumanPlayer(Player):
 
 
 class RandomPlayer(Player):
-    def __init__(self, name, board, wait_time=RANDOM_PLAYER_WAIT_TIME):
-        super().__init__(name, board)
+    def __init__(self, name, board, wait_time=RANDOM_PLAYER_WAIT_TIME, **kwargs):
+        super().__init__(name, board, **kwargs)
         self.wait_time = wait_time
 
     def take_turn(self):
