@@ -1,43 +1,56 @@
 from src.board import Board, EmptyCup, InvalidCup
-from src.player import RandomPlayer
+from src.player import ImprovedRandomPlayer, RandomPlayer, Result
 from src.terminal import Location, Terminal
 
 
 class Game:
-    def __init__(self, side_length=6):
+    def __init__(
+        self,
+        side_length=6,
+        player1=None,
+        player2=None,
+        initial_seeds=None,
+        player_1_color=None,
+        player_2_color=None,
+        animation_wait=0.1,
+    ):
         self.term = Terminal()
 
-        player_1_color = self.term.bold + self.term.red
-        player_2_color = self.term.bold + self.term.blue
+        if player_1_color is None:
+            player_1_color = self.term.bold + self.term.red
+
+        if player_2_color is None:
+            player_2_color = self.term.bold + self.term.blue
+
         seed_color = self.term.green
         index_color = self.term.yellow
-        animation_wait = 0.5
 
         self.term.clear()
         self.term.move(Location(5, 5))
 
         self.board = Board(
             side_length,
-            player_1_color=player_1_color,
-            player_2_color=player_2_color,
             seed_color=seed_color,
             index_color=index_color,
             animation_wait=animation_wait,
         )
 
-        seeds = self._get_initial_seeds()
+        self.player1 = player1 or RandomPlayer(
+            'Player1', board=self.board, wait_time=0.5, color=player_1_color
+        )
+        self.player2 = player2 or ImprovedRandomPlayer(
+            'Player2', board=self.board, wait_time=0.5, color=player_2_color
+        )
+        self.board.assign_player(self.player1)
+        self.board.assign_player(self.player2)
+
+        self.current_player = self.player1
+        self._players = (self.player1, self.player2)
+
+        seeds = initial_seeds or self._get_initial_seeds()
         self.board.initialize_cups(seeds)
         self.board.clear_board()
         self.board.display_cups()
-
-        self.player1 = RandomPlayer(
-            'Player1', self.board, wait_time=0.5, color=self.term.bold + self.term.red
-        )
-        self.player2 = RandomPlayer(
-            'Player2', self.board, wait_time=0.5, color=self.term.bold + self.term.blue
-        )
-        self.current_player = self.player1
-        self._players = (self.player1, self.player2)
 
     def _get_initial_seeds(self):
         seeds = input('Enter the initial number of seeds per cup: ')
@@ -53,7 +66,7 @@ class Game:
             self.board.display_cups()
 
             try:
-                cup = self.current_player.take_turn()
+                cup = self.current_player._take_turn()
                 last_cup = self.board.sow(cup, color=self.current_player.color)
             except (EmptyCup, InvalidCup):
                 continue
@@ -66,10 +79,16 @@ class Game:
         print()
         if self.board.player_1_cup > self.board.player_2_cup:
             print(f'{self.player1.name} Wins!')
+            self.board.player1.game_over(Result.Win)
+            self.board.player2.game_over(Result.Loss)
         elif self.board.player_1_cup < self.board.player_2_cup:
             print(f'{self.player2.name} Wins!')
+            self.board.player1.game_over(Result.Loss)
+            self.board.player2.game_over(Result.Win)
         else:
             print('Tie game!')
+            self.board.player1.game_over(Result.Tie)
+            self.board.player2.game_over(Result.Tie)
 
     def _determine_next_player(self, last_cup):
         if self.current_player == self.player1:

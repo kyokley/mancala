@@ -16,15 +16,17 @@ class EmptyCup(Exception):
     pass
 
 
+class TooManyPlayers(Exception):
+    pass
+
+
+class NotEnoughPlayers(Exception):
+    pass
+
+
 class Board:
     def __init__(
-        self,
-        side_length,
-        animation_wait=1,
-        player_1_color=None,
-        player_2_color=None,
-        seed_color=None,
-        index_color=None,
+        self, side_length, animation_wait=1, seed_color=None, index_color=None,
     ):
         """
         Indexes and their associated letters:
@@ -40,8 +42,6 @@ class Board:
         self.total_number_of_cups = self.side_length * 2 + 2
         self.cups = [0] * self.total_number_of_cups
 
-        self._PLAYER_1_COLOR = player_1_color
-        self._PLAYER_2_COLOR = player_2_color
         self._SEED_COLOR = seed_color
         self._INDEX_COLOR = index_color
 
@@ -78,6 +78,24 @@ class Board:
 
         self._build_index_dicts()
 
+        self.players = []
+
+    @property
+    def ready_to_play(self):
+        return len(self.players) == 2
+
+    def assign_player(self, player):
+        if len(self.players) == 2:
+            raise TooManyPlayers('Cannot add any more players to this board')
+
+        if not self.players:
+            self.player1 = player
+            self.player1.assign_board(self)
+        elif len(self.players) == 1:
+            self.player2 = player
+            self.player2.assign_board(self)
+        self.players.append(player)
+
     @property
     def max_row(self):
         return self._BOTTOM_ROW_INDICATOR_LOCATION.row
@@ -104,7 +122,7 @@ class Board:
 
     @property
     def top_row_cups(self):
-        return sorted([self._index_to_cup[idx] for idx in self.top_row_indices])
+        return sorted([self.index_to_cup[idx] for idx in self.top_row_indices])
 
     @property
     def bottom_row(self):
@@ -116,7 +134,7 @@ class Board:
 
     @property
     def bottom_row_cups(self):
-        return sorted([self._index_to_cup[idx] for idx in self.bottom_row_indices])
+        return sorted([self.index_to_cup[idx] for idx in self.bottom_row_indices])
 
     @property
     def player_1_cup_index(self):
@@ -139,23 +157,26 @@ class Board:
         return len(self.cups) // 2
 
     def cup_seeds(self, cup):
-        return self.cups[self._cup_to_index[cup]]
+        return self.cups[self.cup_to_index[cup]]
+
+    def cup_seeds_by_index(self, index):
+        return self.cups[index]
 
     def _build_index_dicts(self):
-        self._cup_to_index = dict()
+        self.cup_to_index = dict()
         self._index_to_cup_indicator = dict()
 
         letter_sequence = generate_sequence(len(self.cups) - 2)
 
         for i in range(1, self._midpoint):
             letter = letter_sequence.pop(0)
-            self._cup_to_index[letter] = i
+            self.cup_to_index[letter] = i
 
         for i in range(len(self.cups) - 1, self._midpoint, -1):
             letter = letter_sequence.pop(0)
-            self._cup_to_index[letter] = i
+            self.cup_to_index[letter] = i
 
-        self._index_to_cup = {v: k for k, v in self._cup_to_index.items()}
+        self.index_to_cup = {v: k for k, v in self.cup_to_index.items()}
 
         for i in range(len(self.cups)):
             if i == 0:  # Player1's cup
@@ -195,11 +216,14 @@ class Board:
             self.cups[i] = int(seeds)
 
     def sow(self, cup, color=None):
-        if cup not in self._cup_to_index:
+        if not self.ready_to_play:
+            raise NotEnoughPlayers('Not enough players to start the game')
+
+        if cup not in self.cup_to_index:
             raise InvalidCup(f'Invalid cup. Got {cup}.')
 
         self.clear_indicators()
-        index = self._cup_to_index[cup]
+        index = self.cup_to_index[cup]
         seeds = self.cups[index]
 
         if seeds == 0:
@@ -239,11 +263,14 @@ class Board:
         self.clear_indicators()
 
     def display_cups(self):
+        if not self.ready_to_play:
+            raise NotEnoughPlayers('Not enough players to start the game')
+
         self.term.move(self._PLAYER_1_LOCATION)
-        self.term.display(self.player_1_cup, color=self._PLAYER_1_COLOR)
+        self.term.display(self.player_1_cup, color=self.player1.color)
 
         self.term.move(self._PLAYER_2_LOCATION)
-        self.term.display(self.player_2_cup, color=self._PLAYER_2_COLOR)
+        self.term.display(self.player_2_cup, color=self.player2.color)
 
         # Draw the top row
         # Draw cup indices
