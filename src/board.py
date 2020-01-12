@@ -1,10 +1,9 @@
 import itertools
 import time
-
 from collections import namedtuple
+
 from src.terminal import Location, Terminal
 from src.utils import generate_sequence
-
 
 Indicator = namedtuple('Indicator', 'location symbol')
 
@@ -18,14 +17,15 @@ class EmptyCup(Exception):
 
 
 class Board:
-    def __init__(self,
-                 side_length,
-                 animation_wait=1,
-                 player_1_color=None,
-                 player_2_color=None,
-                 seed_color=None,
-                 index_color=None,
-                 ):
+    def __init__(
+        self,
+        side_length,
+        animation_wait=1,
+        player_1_color=None,
+        player_2_color=None,
+        seed_color=None,
+        index_color=None,
+    ):
         """
         Indexes and their associated letters:
 
@@ -50,13 +50,17 @@ class Board:
         self._INITIAL_LOCATION = Location(10, 10)
         self._HORIZONTAL_SPACER = Location(0, 4)
 
-        self._TOP_ROW_INDICATOR_LOCATION = self._INITIAL_LOCATION + self._HORIZONTAL_SPACER
-        self._TOP_ROW_INDICES_LOCATION = (
-            self._TOP_ROW_INDICATOR_LOCATION + Location(1, 0)
+        self._TOP_ROW_INDICATOR_LOCATION = (
+            self._INITIAL_LOCATION + self._HORIZONTAL_SPACER
+        )
+        self._TOP_ROW_INDICES_LOCATION = self._TOP_ROW_INDICATOR_LOCATION + Location(
+            1, 0
         )
         self._TOP_ROW_LOCATION = self._TOP_ROW_INDICES_LOCATION + Location(1, 0)
 
-        self._PLAYER_1_LOCATION = Location(self._TOP_ROW_LOCATION.row + 1, self._INITIAL_LOCATION.column)
+        self._PLAYER_1_LOCATION = Location(
+            self._TOP_ROW_LOCATION.row + 1, self._INITIAL_LOCATION.column
+        )
         self._PLAYER_2_LOCATION = self._PLAYER_1_LOCATION + Location(
             0, self._HORIZONTAL_SPACER.column * (self.side_length + 1)
         )
@@ -65,7 +69,9 @@ class Board:
             self._PLAYER_1_LOCATION + self._HORIZONTAL_SPACER + Location(1, 0)
         )
         self._BOTTOM_ROW_INDICES_LOCATION = self._BOTTOM_ROW_LOCATION + Location(1, 0)
-        self._BOTTOM_ROW_INDICATOR_LOCATION = self._BOTTOM_ROW_INDICES_LOCATION + Location(1, 0)
+        self._BOTTOM_ROW_INDICATOR_LOCATION = (
+            self._BOTTOM_ROW_INDICES_LOCATION + Location(1, 0)
+        )
 
         self._PLAYER_1_INDICATOR = self._PLAYER_1_LOCATION - self._HORIZONTAL_SPACER
         self._PLAYER_2_INDICATOR = self._PLAYER_2_LOCATION + self._HORIZONTAL_SPACER
@@ -153,13 +159,25 @@ class Board:
 
         for i in range(len(self.cups)):
             if i == 0:  # Player1's cup
-                self._index_to_cup_indicator[i] = Indicator(self._PLAYER_1_INDICATOR, '>')
+                self._index_to_cup_indicator[i] = Indicator(
+                    self._PLAYER_1_INDICATOR, '>'
+                )
             elif i < self._midpoint:  # Top row
-                self._index_to_cup_indicator[i] = Indicator((i - 1) * self._HORIZONTAL_SPACER + self._TOP_ROW_INDICATOR_LOCATION, 'v')
+                self._index_to_cup_indicator[i] = Indicator(
+                    (i - 1) * self._HORIZONTAL_SPACER
+                    + self._TOP_ROW_INDICATOR_LOCATION,
+                    'v',
+                )
             elif i == self._midpoint:  # Player2's cup
-                self._index_to_cup_indicator[i] = Indicator(self._PLAYER_2_INDICATOR, '<')
+                self._index_to_cup_indicator[i] = Indicator(
+                    self._PLAYER_2_INDICATOR, '<'
+                )
             else:  # Bottom row cups
-                self._index_to_cup_indicator[i] = Indicator((len(self.cups) - i - 1) * self._HORIZONTAL_SPACER + self._BOTTOM_ROW_INDICATOR_LOCATION, '^')
+                self._index_to_cup_indicator[i] = Indicator(
+                    (len(self.cups) - i - 1) * self._HORIZONTAL_SPACER
+                    + self._BOTTOM_ROW_INDICATOR_LOCATION,
+                    '^',
+                )
 
     def clear_indicators(self):
         for idx, indicator in self._index_to_cup_indicator.items():

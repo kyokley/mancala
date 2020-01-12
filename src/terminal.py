@@ -56,7 +56,7 @@ class Terminal:
             'underline',
             'no_underline',
             'blink',
-            'normal'
+            'normal',
         ):
             return getattr(self._term, name)
         else:
