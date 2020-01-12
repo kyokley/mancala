@@ -18,7 +18,14 @@ class EmptyCup(Exception):
 
 
 class Board:
-    def __init__(self, side_length, animation_wait=1):
+    def __init__(self,
+                 side_length,
+                 animation_wait=1,
+                 player_1_color=None,
+                 player_2_color=None,
+                 seed_color=None,
+                 index_color=None,
+                 ):
         """
         Indexes and their associated letters:
 
@@ -32,6 +39,11 @@ class Board:
         self.side_length = side_length
         self.total_number_of_cups = self.side_length * 2 + 2
         self.cups = [0] * self.total_number_of_cups
+
+        self._PLAYER_1_COLOR = player_1_color
+        self._PLAYER_2_COLOR = player_2_color
+        self._SEED_COLOR = seed_color
+        self._INDEX_COLOR = index_color
 
         self._ANIMATION_WAIT = animation_wait
 
@@ -175,10 +187,10 @@ class Board:
         if seeds == 0:
             raise EmptyCup(f"Cup '{cup}' is empty.")
 
-        self.cups[index] = 0
         self._draw_indicator(index, color=color)
-        self.display_cups()
         print()
+        self.cups[index] = 0
+        self.display_cups()
         time.sleep(self._ANIMATION_WAIT)
 
         while seeds:
@@ -210,10 +222,10 @@ class Board:
 
     def display_cups(self):
         self.term.move(self._PLAYER_1_LOCATION)
-        self.term.display(self.player_1_cup)
+        self.term.display(self.player_1_cup, color=self._PLAYER_1_COLOR)
 
         self.term.move(self._PLAYER_2_LOCATION)
-        self.term.display(self.player_2_cup)
+        self.term.display(self.player_2_cup, color=self._PLAYER_2_COLOR)
 
         # Draw the top row
         # Draw cup indices
@@ -221,14 +233,14 @@ class Board:
 
         for key in self.top_row_cups:
             self.term.move(current_location)
-            self.term.display(key)
+            self.term.display(key, color=self._INDEX_COLOR)
             current_location += self._HORIZONTAL_SPACER
 
         current_location = self._TOP_ROW_LOCATION
 
         for val in self.top_row:
             self.term.move(current_location)
-            self.term.display(val)
+            self.term.display(val, color=self._SEED_COLOR)
             current_location += self._HORIZONTAL_SPACER
 
         # Draw player cups
@@ -237,12 +249,12 @@ class Board:
 
         for val in reversed(self.bottom_row):
             self.term.move(current_location)
-            self.term.display(val)
+            self.term.display(val, color=self._SEED_COLOR)
             current_location += self._HORIZONTAL_SPACER
 
         current_location = self._BOTTOM_ROW_INDICES_LOCATION
 
         for key in self.bottom_row_cups:
             self.term.move(current_location)
-            self.term.display(key)
+            self.term.display(key, color=self._INDEX_COLOR)
             current_location += self._HORIZONTAL_SPACER

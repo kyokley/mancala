@@ -7,10 +7,22 @@ class Game:
     def __init__(self, side_length=6):
         self.term = Terminal()
 
+        player_1_color = self.term.bold + self.term.red
+        player_2_color = self.term.bold + self.term.blue
+        seed_color = self.term.green
+        index_color = self.term.yellow
+        animation_wait = .5
+
         self.term.clear()
         self.term.move(Location(5, 5))
 
-        self.board = Board(side_length)
+        self.board = Board(side_length,
+                           player_1_color=player_1_color,
+                           player_2_color=player_2_color,
+                           seed_color=seed_color,
+                           index_color=index_color,
+                           animation_wait=animation_wait,
+                           )
 
         seeds = self._get_initial_seeds()
         self.board.initialize_cups(seeds)
