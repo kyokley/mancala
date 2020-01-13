@@ -216,9 +216,6 @@ class Board:
             self.cups[i] = int(seeds)
 
     def sow(self, cup, color=None):
-        if not self.ready_to_play:
-            raise NotEnoughPlayers('Not enough players to start the game')
-
         if cup not in self.cup_to_index:
             raise InvalidCup(f'Invalid cup. Got {cup}.')
 
@@ -263,9 +260,6 @@ class Board:
         self.clear_indicators()
 
     def display_cups(self):
-        if not self.ready_to_play:
-            raise NotEnoughPlayers('Not enough players to start the game')
-
         self.term.move(self._PLAYER_1_LOCATION)
         self.term.display(self.player_1_cup, color=self.player1.color)
 

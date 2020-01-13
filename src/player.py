@@ -148,7 +148,7 @@ class ImprovedRandomPlayer(RandomPlayer):
 
 
 class DefensivePlayer(ImprovedRandomPlayer):
-    def _defensive_moves(self):
+    def _defensive_move(self):
         moves = []
 
         for index in itertools.chain(
@@ -166,20 +166,34 @@ class DefensivePlayer(ImprovedRandomPlayer):
             ):
                 moves.append({'cup': self.board.index_to_cup[index], 'seeds': seeds})
 
-        moves.sort(key=lambda x: x['seeds'])
-        return moves
+        moves.sort(key=lambda x: x['seeds'], reverse=True)
+
+        if moves:
+            opp_free_move_cup = moves[0]['cup']
+
+            legal_moves = self._legal_cups
+            index = self._legal_cups.index(opp_free_move_cup)
+
+            if opp_free_move_cup in self.board.top_row_cups:
+                move = legal_moves.pop((index - 1) % len(legal_moves))
+            else:
+                move = legal_moves.pop((index + 1) % len(legal_moves))
+
+            return move
+        return None
 
     def take_turn(self):
-        time.sleep(self.wait_time)
         free_play_moves = self._free_play_moves()
-        defensive_moves = self._defensive_moves()
 
         if free_play_moves:
             next_move = free_play_moves[0]['cup']
-        elif defensive_moves:
-            next_move = defensive_moves[0]['cup']
         else:
-            next_move = rand.choice(self._legal_cups)
+            defensive_move = self._defensive_move()
+
+            if defensive_move:
+                next_move = defensive_move
+            else:
+                next_move = rand.choice(self._legal_cups)
 
         print(f'{self.color}{self.name}{self.term.normal} chooses {next_move}')
         time.sleep(self.wait_time)
