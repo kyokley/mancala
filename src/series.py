@@ -1,5 +1,5 @@
 import sys
-from src.player import RandomPlayer, ImprovedRandomPlayer, HumanPlayer
+from src.player import RandomPlayer, ImprovedRandomPlayer, HumanPlayer, DefensivePlayer
 from src.game import Game
 from src.terminal import Location, Terminal
 
@@ -20,7 +20,7 @@ class Series:
         # self.player1 = ImprovedRandomPlayer(
             # 'Alice', wait_time=self.animation_wait, color=player_1_color
         # )
-        self.player1 = HumanPlayer('Kevin', color=player_1_color)
+        self.player1 = DefensivePlayer('Alice', color=player_1_color)
         self.player2 = ImprovedRandomPlayer(
             'Bob', wait_time=self.animation_wait, color=player_2_color
         )
@@ -68,7 +68,7 @@ def main():
         return
 
     series = Series(number_of_games=number_of_games,
-                    animation_wait=1,
+                    animation_wait=.1,
                     )
 
     try:

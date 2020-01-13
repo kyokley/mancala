@@ -36,7 +36,7 @@ class Player:
             raise NoGameInProgress('No board has been assigned to this player')
 
         self.term.move(*Location(19, 0))
-        print(f"{self.name}'s turn")
+        print(f"{self.color}{self.name}{self.term.normal}'s turn")
         cup = self.take_turn()
 
         if cup is None:
@@ -107,7 +107,7 @@ class RandomPlayer(Player):
         time.sleep(self.wait_time)
 
         cup = rand.choice(self._legal_cups)
-        print(f'{self.name} chooses {cup}')
+        print(f'{self.color}{self.name}{self.term.normal} chooses {cup}')
         time.sleep(self.wait_time)
         return cup
 
@@ -142,6 +142,45 @@ class ImprovedRandomPlayer(RandomPlayer):
         else:
             next_move = rand.choice(self._legal_cups)
 
-        print(f'{self.name} chooses {next_move}')
+        print(f'{self.color}{self.name}{self.term.normal} chooses {next_move}')
+        time.sleep(self.wait_time)
+        return next_move
+
+
+class DefensivePlayer(ImprovedRandomPlayer):
+    def _defensive_moves(self):
+        moves = []
+
+        for index in itertools.chain(
+            self.board.top_row_indices, self.board.bottom_row_indices
+        ):
+            seeds = self.board.cup_seeds_by_index(index)
+
+            if seeds == 0:
+                continue
+
+            if (index + seeds) % len(self.board.cups) == (
+                self.board.player_2_cup_index
+                if self.is_player1
+                else self.board.player_1_cup_index
+            ):
+                moves.append({'cup': self.board.index_to_cup[index], 'seeds': seeds})
+
+        moves.sort(key=lambda x: x['seeds'])
+        return moves
+
+    def take_turn(self):
+        time.sleep(self.wait_time)
+        free_play_moves = self._free_play_moves()
+        defensive_moves = self._defensive_moves()
+
+        if free_play_moves:
+            next_move = free_play_moves[0]['cup']
+        elif defensive_moves:
+            next_move = defensive_moves[0]['cup']
+        else:
+            next_move = rand.choice(self._legal_cups)
+
+        print(f'{self.color}{self.name}{self.term.normal} chooses {next_move}')
         time.sleep(self.wait_time)
         return next_move
