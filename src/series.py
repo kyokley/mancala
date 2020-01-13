@@ -1,11 +1,12 @@
 import sys
-from src.player import RandomPlayer, ImprovedRandomPlayer, HumanPlayer, DefensivePlayer
+
 from src.game import Game
+from src.player import DefensivePlayer, HumanPlayer, ImprovedRandomPlayer, RandomPlayer
 from src.terminal import Location, Terminal
 
 
 class Series:
-    def __init__(self, initial_seeds=3, number_of_games=10, animation_wait=.01):
+    def __init__(self, initial_seeds=3, number_of_games=10, animation_wait=0.01):
         self.term = Terminal()
 
         self.number_of_games = number_of_games
@@ -18,7 +19,7 @@ class Series:
         self.games = []
 
         # self.player1 = ImprovedRandomPlayer(
-            # 'Alice', wait_time=self.animation_wait, color=player_1_color
+        # 'Alice', wait_time=self.animation_wait, color=player_1_color
         # )
         self.player1 = DefensivePlayer('Alice', color=player_1_color)
         self.player2 = ImprovedRandomPlayer(
@@ -28,17 +29,19 @@ class Series:
     def run_games(self):
         for idx in range(self.number_of_games):
             if idx % 2:
-                game = Game(player1=self.player1,
-                            player2=self.player2,
-                            initial_seeds=self.initial_seeds,
-                            animation_wait=self.animation_wait,
-                            )
+                game = Game(
+                    player1=self.player1,
+                    player2=self.player2,
+                    initial_seeds=self.initial_seeds,
+                    animation_wait=self.animation_wait,
+                )
             else:
-                game = Game(player1=self.player2,
-                            player2=self.player1,
-                            initial_seeds=self.initial_seeds,
-                            animation_wait=self.animation_wait,
-                            )
+                game = Game(
+                    player1=self.player2,
+                    player2=self.player1,
+                    initial_seeds=self.initial_seeds,
+                    animation_wait=self.animation_wait,
+                )
 
             game.run()
 
@@ -67,9 +70,7 @@ def main():
         print('Invalid number of games requested.')
         return
 
-    series = Series(number_of_games=number_of_games,
-                    animation_wait=.1,
-                    )
+    series = Series(number_of_games=number_of_games, animation_wait=0.1,)
 
     try:
         series.run_games()
