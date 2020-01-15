@@ -6,7 +6,7 @@ from src.terminal import Location, Terminal
 
 
 class Series:
-    def __init__(self, initial_seeds=3, number_of_games=10, animation_wait=0.01):
+    def __init__(self, initial_seeds=3, number_of_games=10, animation_wait=0.001):
         self.term = Terminal()
 
         self.number_of_games = number_of_games
@@ -21,8 +21,8 @@ class Series:
         # self.player1 = ImprovedRandomPlayer(
         # 'Alice', wait_time=self.animation_wait, color=player_1_color
         # )
-        self.player1 = DefensivePlayer('Alice', color=player_1_color)
-        self.player2 = ImprovedRandomPlayer(
+        self.player1 = DefensivePlayer('Alice', color=player_1_color, wait_time=self.animation_wait)
+        self.player2 = DefensivePlayer(
             'Bob', wait_time=self.animation_wait, color=player_2_color
         )
 
@@ -70,7 +70,7 @@ def main():
         print('Invalid number of games requested.')
         return
 
-    series = Series(number_of_games=number_of_games, animation_wait=0.1,)
+    series = Series(number_of_games=number_of_games, animation_wait=.25,)
 
     try:
         series.run_games()
