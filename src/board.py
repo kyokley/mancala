@@ -47,7 +47,7 @@ class Board:
 
         self._ANIMATION_WAIT = animation_wait
 
-        self._INITIAL_LOCATION = Location(10, 10)
+        self._INITIAL_LOCATION = Location(5, 10)
         self._HORIZONTAL_SPACER = Location(0, 4)
 
         self._TOP_ROW_INDICATOR_LOCATION = (
