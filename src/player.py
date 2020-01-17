@@ -16,7 +16,7 @@ class Result(IntEnum):
     Win = 2
 
 
-RANDOM_PLAYER_WAIT_TIME = .5
+RANDOM_PLAYER_WAIT_TIME = 0.5
 rand = random.SystemRandom()
 
 

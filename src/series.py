@@ -21,7 +21,9 @@ class Series:
         # self.player1 = ImprovedRandomPlayer(
         # 'Alice', wait_time=self.animation_wait, color=player_1_color
         # )
-        self.player1 = DefensivePlayer('Alice', color=player_1_color, wait_time=self.animation_wait)
+        self.player1 = DefensivePlayer(
+            'Alice', color=player_1_color, wait_time=self.animation_wait
+        )
         self.player2 = DefensivePlayer(
             'Bob', wait_time=self.animation_wait, color=player_2_color
         )
@@ -70,7 +72,7 @@ def main():
         print('Invalid number of games requested.')
         return
 
-    series = Series(number_of_games=number_of_games, animation_wait=.25,)
+    series = Series(number_of_games=number_of_games, animation_wait=0.25,)
 
     try:
         series.run_games()
