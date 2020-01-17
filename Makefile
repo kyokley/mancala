@@ -7,3 +7,4 @@ autoformat:
 tests:
 	pytest
 	git ls-files | grep -P '\.py$$' | xargs black -S --check
+	git ls-files | grep -P '\.py$$' | xargs flake8 --select F821,F401

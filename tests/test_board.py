@@ -1,9 +1,6 @@
-from unittest import mock
-
 import pytest
 
 from src.board import Board, EmptyCup, InvalidCup
-from src.player import Player
 
 
 class TestBuildIndexDicts:

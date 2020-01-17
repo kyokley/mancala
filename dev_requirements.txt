@@ -6,3 +6,4 @@ isort
 bpython
 pdbpp
 pytest-factoryboy
+flake8

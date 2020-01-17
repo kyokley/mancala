@@ -1,8 +1,8 @@
 import sys
 
 from src.game import Game
-from src.player import DefensivePlayer, HumanPlayer, ImprovedRandomPlayer, RandomPlayer
-from src.terminal import Location, Terminal
+from src.player import DefensivePlayer
+from src.terminal import Terminal
 
 
 class Series:
