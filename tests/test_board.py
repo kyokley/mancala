@@ -1,12 +1,23 @@
 import pytest
+from unittest import mock
 
 from src.board import Board, EmptyCup, InvalidCup
+from src.player import Player
 
 
 class TestBuildIndexDicts:
+    @pytest.fixture(autouse=True)
+    def setUp(self, player_factory):
+        self.player1 = player_factory()
+        self.player2 = player_factory()
+
     def test_seven_cups(self):
         side_length = 7
-        board = Board(side_length)
+        board = Board(side_length,
+                      player1=self.player1,
+                      player2=self.player2,
+                      animation_wait=0,
+                      )
 
         expected_cup_to_index = {
             'a': 1,
@@ -54,7 +65,11 @@ class TestBuildIndexDicts:
 
     def test_six_cups(self):
         side_length = 6
-        board = Board(side_length)
+        board = Board(side_length,
+                      player1=self.player1,
+                      player2=self.player2,
+                      animation_wait=0,
+                      )
 
         expected_cup_to_index = {
             'a': 1,
@@ -195,9 +210,16 @@ class TestSow:
     """
 
     @pytest.fixture(autouse=True)
-    def setUp(self):
+    def setUp(self, player_factory):
+        self.player1 = player_factory()
+        self.player2 = player_factory()
+
         self.side_length = 6
-        self.board = Board(self.side_length)
+        self.board = Board(self.side_length,
+                           player1=self.player1,
+                           player2=self.player2,
+                           animation_wait=0,
+                           )
         self.board.initialize_cups(4)
 
     def test_sow_in_top_row(self):

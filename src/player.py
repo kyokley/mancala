@@ -16,7 +16,7 @@ class Result(IntEnum):
     Win = 2
 
 
-RANDOM_PLAYER_WAIT_TIME = 1
+RANDOM_PLAYER_WAIT_TIME = .5
 rand = random.SystemRandom()
 
 
@@ -166,9 +166,9 @@ class DefensivePlayer(ImprovedRandomPlayer):
             ):
                 moves.append({'cup': self.board.index_to_cup[index], 'seeds': seeds})
 
-        moves.sort(key=lambda x: x['seeds'], reverse=True)
-
         if moves:
+            moves.sort(key=lambda x: x['seeds'], reverse=True)
+
             opp_free_move_cup = moves[0]['cup']
 
             legal_moves = self._legal_cups

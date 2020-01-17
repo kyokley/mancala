@@ -5,3 +5,4 @@ black
 isort
 bpython
 pdbpp
+pytest-factoryboy

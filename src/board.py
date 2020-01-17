@@ -26,7 +26,13 @@ class NotEnoughPlayers(Exception):
 
 class Board:
     def __init__(
-        self, side_length, animation_wait=1, seed_color=None, index_color=None,
+        self,
+        side_length,
+        animation_wait=1,
+        seed_color=None,
+        index_color=None,
+        player1=None,
+        player2=None,
     ):
         """
         Indexes and their associated letters:
@@ -79,6 +85,12 @@ class Board:
         self._build_index_dicts()
 
         self.players = []
+
+        if player1:
+            self.assign_player(player1)
+
+        if player2:
+            self.assign_player(player2)
 
     @property
     def ready_to_play(self):
@@ -162,21 +174,29 @@ class Board:
     def cup_seeds_by_index(self, index):
         return self.cups[index]
 
+    @property
+    def cup_to_index(self):
+        return self._cup_to_index
+
+    @property
+    def index_to_cup(self):
+        return self._index_to_cup
+
     def _build_index_dicts(self):
-        self.cup_to_index = dict()
+        self._cup_to_index = dict()
         self._index_to_cup_indicator = dict()
 
         letter_sequence = generate_sequence(len(self.cups) - 2)
 
         for i in range(1, self._midpoint):
             letter = letter_sequence.pop(0)
-            self.cup_to_index[letter] = i
+            self._cup_to_index[letter] = i
 
         for i in range(len(self.cups) - 1, self._midpoint, -1):
             letter = letter_sequence.pop(0)
-            self.cup_to_index[letter] = i
+            self._cup_to_index[letter] = i
 
-        self.index_to_cup = {v: k for k, v in self.cup_to_index.items()}
+        self._index_to_cup = {v: k for k, v in self._cup_to_index.items()}
 
         for i in range(len(self.cups)):
             if i == 0:  # Player1's cup
