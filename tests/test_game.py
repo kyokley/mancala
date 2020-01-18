@@ -31,3 +31,12 @@ class TestDetermineNextPlayer:
 
         self.game._determine_next_player(last_cup)
         assert self.game.current_player == player
+
+
+class TestFullGame:
+    @pytest.fixture(autouse=True)
+    def setUp(self, basic_game_setup):
+        basic_game_setup(self)
+
+    def test_full_game(self):
+        self.game.run()

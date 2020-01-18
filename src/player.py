@@ -36,7 +36,7 @@ class Player:
             raise NoGameInProgress('No board has been assigned to this player')
 
         self.term.move(*Location(19, 0))
-        print(f"{self.color}{self.name}{self.term.normal}'s turn")
+        print(f"{self.color or ''}{self.name}{self.term.normal}'s turn")
         cup = self.take_turn()
 
         if cup is None:
@@ -149,7 +149,7 @@ class ImprovedRandomPlayer(RandomPlayer):
 
 class DefensivePlayer(ImprovedRandomPlayer):
     def _defensive_move(self):
-        moves = []
+        opp_free_moves = []
 
         for index in itertools.chain(
             self.board.top_row_indices, self.board.bottom_row_indices
@@ -164,23 +164,56 @@ class DefensivePlayer(ImprovedRandomPlayer):
                 if self.is_player1
                 else self.board.player_1_cup_index
             ):
-                moves.append({'cup': self.board.index_to_cup[index], 'seeds': seeds})
+                opp_free_moves.append(
+                    {'cup': self.board.index_to_cup[index], 'seeds': seeds}
+                )
 
-        if moves:
-            moves.sort(key=lambda x: x['seeds'], reverse=True)
+        if opp_free_moves:
+            opp_free_moves.sort(key=lambda x: x['seeds'], reverse=True)
 
-            opp_free_move_cup = moves[0]['cup']
+            for opp_free_move in opp_free_moves:
+                opp_free_move_cup = opp_free_move['cup']
 
-            legal_moves = self._legal_cups
-            index = self._legal_cups.index(opp_free_move_cup)
+                for check_cup in self._legal_moves_in_reverse(
+                    starting_with=opp_free_move_cup
+                ):
+                    check_cup_seeds = self.board.cup_seeds(check_cup)
 
-            if opp_free_move_cup in self.board.top_row_cups:
-                move = legal_moves.pop((index - 1) % len(legal_moves))
-            else:
-                move = legal_moves.pop((index + 1) % len(legal_moves))
-
-            return move
+                    if check_cup_seeds >= self._distance(check_cup, opp_free_move_cup):
+                        return check_cup
         return None
+
+    def _distance(self, first_cup, second_cup):
+        first_index = self.board.cup_to_index[first_cup]
+        second_index = self.board.cup_to_index[second_cup]
+
+        number_of_cups = len(self.board.cups)
+        return (second_index - first_index) % number_of_cups
+
+    def _legal_moves_in_reverse(self, starting_with=None):
+        moves = []
+
+        if not starting_with:
+            starting_with = self._legal_cups[0]
+        starting_index = self.board.cup_to_index[starting_with]
+        number_of_playable_cups = len(self.board.top_row_cups) * 2
+
+        for idx in range(number_of_playable_cups):
+            test_index = (starting_index - (idx + 1)) % number_of_playable_cups
+
+            if test_index in (
+                self.board.player_1_cup_index,
+                self.board.player_2_cup_index,
+            ):
+                continue
+
+            ref_cup = self.board.index_to_cup[test_index]
+            seeds = self.board.cup_seeds(ref_cup)
+
+            if seeds > 0:
+                moves.append(ref_cup)
+
+        return moves
 
     def take_turn(self):
         free_play_moves = self._free_play_moves()

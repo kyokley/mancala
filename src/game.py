@@ -1,5 +1,5 @@
 from src.board import Board, EmptyCup, InvalidCup
-from src.player import ImprovedRandomPlayer, RandomPlayer, Result
+from src.player import DefensivePlayer, HumanPlayer, ImprovedRandomPlayer, Result
 from src.terminal import Location, Terminal
 
 
@@ -35,12 +35,13 @@ class Game:
             animation_wait=animation_wait,
         )
 
-        self.player1 = player1 or RandomPlayer(
-            'Player1', board=self.board, wait_time=0.5, color=player_1_color
+        self.player1 = player1 or DefensivePlayer(
+            'Player1', board=self.board, wait_time=animation_wait, color=player_1_color
         )
         self.player2 = player2 or ImprovedRandomPlayer(
-            'Player2', board=self.board, wait_time=0.5, color=player_2_color
+            'Player2', board=self.board, wait_time=animation_wait, color=player_2_color
         )
+
         self.board.assign_player(self.player1)
         self.board.assign_player(self.player2)
 
@@ -100,7 +101,9 @@ class Game:
 
 
 def main():
-    game = Game()
+    player1 = DefensivePlayer('Player1',)
+    player2 = HumanPlayer('Player2',)
+    game = Game(player1=player1, player2=player2)
 
     try:
         game.run()
