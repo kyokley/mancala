@@ -215,6 +215,104 @@ class DefensivePlayer(ImprovedRandomPlayer):
 
         return moves
 
+    @property
+    def _my_cup_index(self):
+        return (
+            self.board.player_1_cup_index
+            if self.is_player1
+            else self.board.player_2_cup_index
+        )
+
+    @property
+    def _opp_cup_index(self):
+        return (
+            self.board.player_1_cup_index
+            if self.is_player2
+            else self.board.player_2_cup_index
+        )
+
+    def _score_moves(self):
+        legal_cups = self._legal_cups
+
+        possible_moves = []
+
+        for legal_cup in legal_cups:
+            fake_board_cups = self._fake_sow(legal_cup)
+            board_score = 0
+
+            for cup_index in range(len(fake_board_cups)):
+                if self._is_player_cup(cup_index):
+                    continue
+
+                cup = self.board.index_to_cup[cup_index]
+                if self._will_finish_in_my_cup(cup, fake_board_cups=fake_board_cups):
+                    board_score += 1
+
+                if self._will_finish_in_opp_cup(cup, fake_board_cups=fake_board_cups):
+                    board_score -= 1
+
+            possible_moves.append({'cup': legal_cup, 'score': board_score})
+
+        return possible_moves
+
+    def _is_player_cup(self, cup_index):
+        return cup_index in (
+            self.board.player_1_cup_index,
+            self.board.player_2_cup_index,
+        )
+
+    def _fake_sow(self, cup):
+        board_cups = self.board.cups.copy()
+
+        index = self.board.cup_to_index[cup]
+        seeds = self.board.cup_seeds(cup)
+
+        if seeds == 0:
+            return board_cups
+
+        board_cups[index] = 0
+        while seeds:
+            index += 1
+            board_cups[index % len(board_cups)] += 1
+            seeds -= 1
+        return board_cups
+
+    def _will_finish_in_my_cup(self, cup, fake_board_cups=None):
+        board_cups = fake_board_cups or self.board.cups
+
+        cup_index = self.board.cup_to_index[cup]
+
+        if self._is_player_cup(cup_index):
+            return False
+
+        seeds = board_cups[cup_index]
+
+        if seeds == 0:
+            return False
+
+        if (cup_index + seeds) % len(board_cups) == self._my_cup_index:
+            return True
+
+        return False
+
+    def _will_finish_in_opp_cup(self, cup, fake_board_cups=None):
+        board_cups = fake_board_cups or self.board.cups
+
+        cup_index = self.board.cup_to_index[cup]
+
+        if self._is_player_cup(cup_index):
+            return False
+
+        seeds = board_cups[cup_index]
+
+        if seeds == 0:
+            return False
+
+        if (cup_index + seeds) % len(board_cups) == self._opp_cup_index:
+            return True
+
+        return False
+
     def take_turn(self):
         free_play_moves = self._free_play_moves()
 
@@ -226,7 +324,17 @@ class DefensivePlayer(ImprovedRandomPlayer):
             if defensive_move:
                 next_move = defensive_move
             else:
-                next_move = rand.choice(self._legal_cups)
+                possible_moves = self._score_moves()
+                possible_moves.sort(key=lambda x: x['score'], reverse=True)
+                max_score = possible_moves[0]['score']
+
+                next_move = rand.choice(
+                    [
+                        move['cup']
+                        for move in possible_moves
+                        if move['score'] == max_score
+                    ]
+                )
 
         print(f'{self.color}{self.name}{self.term.normal} chooses {next_move}')
         time.sleep(self.wait_time)
