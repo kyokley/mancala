@@ -1,7 +1,7 @@
 import itertools
 import random
 import time
-from enum import IntEnum
+from enum import IntEnum, Enum
 
 from src.terminal import Location, Terminal
 
@@ -16,12 +16,19 @@ class Result(IntEnum):
     Win = 2
 
 
+class PlayerType(Enum):
+    Human = 'human'
+    Random = 'random'
+    ImprovedRandom = 'improved_random'
+    Defensive = 'defensive'
+
+
 RANDOM_PLAYER_WAIT_TIME = 0.5
 rand = random.SystemRandom()
 
 
 class Player:
-    def __init__(self, name, board=None, color=None):
+    def __init__(self, name, board=None, color=None, wait_time=None):
         self.term = Terminal()
         self.name = f'{name} ({self.__class__.__name__})'
         self.board = board
@@ -83,6 +90,14 @@ class Player:
 
 
 class HumanPlayer(Player):
+    def __init__(self, name, board=None, color=None, wait_time=None):
+        super().__init__(name,
+                         board=board,
+                         color=color,
+                         wait_time=wait_time,
+                         )
+        self.wait_time = None
+
     def take_turn(self):
         cup = input('Enter cup to sow: ')
         return cup
@@ -238,7 +253,7 @@ class DefensivePlayer(ImprovedRandomPlayer):
 
         for legal_cup in legal_cups:
             fake_board_cups = self._fake_sow(legal_cup)
-            board_score = 0
+            board_score = -1 if self._will_finish_in_opp_cup(legal_cup) else 0
 
             for cup_index in range(len(fake_board_cups)):
                 if self._is_player_cup(cup_index):
@@ -248,7 +263,7 @@ class DefensivePlayer(ImprovedRandomPlayer):
                 if self._will_finish_in_my_cup(cup, fake_board_cups=fake_board_cups):
                     board_score += 1
 
-                if self._will_finish_in_opp_cup(cup, fake_board_cups=fake_board_cups):
+                if self._will_finish_in_opp_cup(cup, fake_board_cups=fake_board_cups) and fake_board_cups[cup_index] > 1:
                     board_score -= 1
 
             possible_moves.append({'cup': legal_cup, 'score': board_score})

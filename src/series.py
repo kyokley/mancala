@@ -1,13 +1,24 @@
 import sys
 
 from src.game import Game
-from src.player import DefensivePlayer
-from src.terminal import Terminal
+from src.player import PlayerType
+from src.terminal import Terminal, Location
+from src.factory import PlayerFactory
+from src.menu import GetUserInput
 
 
 class Series:
-    def __init__(self, initial_seeds=3, number_of_games=10, animation_wait=0.001):
+    def __init__(self,
+                 initial_seeds=3,
+                 number_of_games=10,
+                 animation_wait=0.001,
+                 player1=None,
+                 player2=None,
+                 ):
         self.term = Terminal()
+
+        if number_of_games is None:
+            number_of_games = GetUserInput('Enter number of games: ').get_response()
 
         self.number_of_games = number_of_games
         self.initial_seeds = initial_seeds
@@ -16,21 +27,27 @@ class Series:
         player_1_color = self.term.bold + self.term.red
         player_2_color = self.term.bold + self.term.blue
 
-        self.games = []
+        if not player1:
+            player_class = GetUserInput('Enter player type for Player 1:',
+                                        PlayerFactory.all_classes()).get_response()
+            self.player1 = player_class('Player 1',
+                                        color=player_1_color,
+                                        wait_time=animation_wait)
+        else:
+            self.player1 = player1
 
-        # self.player1 = ImprovedRandomPlayer(
-        # 'Alice', wait_time=self.animation_wait, color=player_1_color
-        # )
-        self.player1 = DefensivePlayer(
-            'Alice', color=player_1_color, wait_time=self.animation_wait
-        )
-        self.player2 = DefensivePlayer(
-            'Bob', wait_time=self.animation_wait, color=player_2_color
-        )
+        if not player2:
+            player_class = GetUserInput('Enter player type for Player 2:',
+                                        PlayerFactory.all_classes()).get_response()
+            self.player2 = player_class('Player 2',
+                                        color=player_2_color,
+                                        wait_time=animation_wait)
+        else:
+            self.player2 = player2
 
     def run_games(self):
         for idx in range(self.number_of_games):
-            if idx % 2:
+            if idx % 2 == 0:
                 game = Game(
                     player1=self.player1,
                     player2=self.player2,
@@ -61,16 +78,10 @@ class Series:
 
 
 def main():
-    number_of_games = 0
+    number_of_games = None
 
     if len(sys.argv) == 2:
         number_of_games = int(sys.argv[1])
-    else:
-        number_of_games = int(input('Enter number of games: '))
-
-    if number_of_games <= 0:
-        print('Invalid number of games requested.')
-        return
 
     series = Series(number_of_games=number_of_games, animation_wait=0.25,)
 
