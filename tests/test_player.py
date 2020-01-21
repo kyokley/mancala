@@ -84,13 +84,13 @@ class TestScoreMoves:
         expected = [
             {'cup': 'a', 'score': 0},
             {'cup': 'b', 'score': -1},
-            {'cup': 'c', 'score': -2},
-            {'cup': 'e', 'score': -1},
-            {'cup': 'g', 'score': -3},
-            {'cup': 'h', 'score': -1},
-            {'cup': 'i', 'score': 0},
-            {'cup': 'j', 'score': 1},
-            {'cup': 'k', 'score': 1},
-            {'cup': 'l', 'score': 2},
+            {'cup': 'c', 'score': -1},
+            {'cup': 'e', 'score': 0},
+            {'cup': 'g', 'score': 4.0},
+            {'cup': 'h', 'score': 5.0},
+            {'cup': 'i', 'score': 6.0},
+            {'cup': 'j', 'score': 7.0},
+            {'cup': 'k', 'score': 7.0},
+            {'cup': 'l', 'score': 8.0},
         ]
         assert scored_moves == expected
