@@ -263,6 +263,9 @@ class DefensivePlayer(ImprovedRandomPlayer):
                 if self._will_finish_in_my_cup(cup, fake_board_cups=fake_board_cups):
                     board_score += 1
 
+                if (self.is_player1 and legal_cup in self.board.bottom_row_cups) or (self.is_player2 and legal_cup in self.board.top_row_cups):
+                    board_score += .5
+
                 if self._will_finish_in_opp_cup(cup, fake_board_cups=fake_board_cups) and fake_board_cups[cup_index] > 1:
                     board_score -= 1
 
