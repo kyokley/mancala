@@ -1,7 +1,7 @@
 import itertools
 import random
 import time
-from enum import IntEnum, Enum
+from enum import Enum, IntEnum
 
 from src.terminal import Location, Terminal
 
@@ -91,11 +91,9 @@ class Player:
 
 class HumanPlayer(Player):
     def __init__(self, name, board=None, color=None, wait_time=None):
-        super().__init__(name,
-                         board=board,
-                         color=color,
-                         wait_time=wait_time,
-                         )
+        super().__init__(
+            name, board=board, color=color, wait_time=wait_time,
+        )
         self.wait_time = None
 
     def take_turn(self):
@@ -263,10 +261,15 @@ class DefensivePlayer(ImprovedRandomPlayer):
                 if self._will_finish_in_my_cup(cup, fake_board_cups=fake_board_cups):
                     board_score += 1
 
-                if (self.is_player1 and legal_cup in self.board.bottom_row_cups) or (self.is_player2 and legal_cup in self.board.top_row_cups):
-                    board_score += .5
+                if (self.is_player1 and legal_cup in self.board.bottom_row_cups) or (
+                    self.is_player2 and legal_cup in self.board.top_row_cups
+                ):
+                    board_score += 0.5
 
-                if self._will_finish_in_opp_cup(cup, fake_board_cups=fake_board_cups) and fake_board_cups[cup_index] > 1:
+                if (
+                    self._will_finish_in_opp_cup(cup, fake_board_cups=fake_board_cups)
+                    and fake_board_cups[cup_index] > 1
+                ):
                     board_score -= 1
 
             possible_moves.append({'cup': legal_cup, 'score': board_score})

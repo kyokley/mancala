@@ -1,4 +1,10 @@
-from src.player import HumanPlayer, RandomPlayer, ImprovedRandomPlayer, DefensivePlayer, PlayerType
+from src.player import (
+    DefensivePlayer,
+    HumanPlayer,
+    ImprovedRandomPlayer,
+    PlayerType,
+    RandomPlayer,
+)
 
 
 class PlayerFactory:

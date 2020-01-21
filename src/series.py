@@ -1,20 +1,20 @@
 import sys
 
-from src.game import Game
-from src.player import PlayerType
-from src.terminal import Terminal, Location
 from src.factory import PlayerFactory
+from src.game import Game
 from src.menu import GetUserInput
+from src.terminal import Terminal
 
 
 class Series:
-    def __init__(self,
-                 initial_seeds=3,
-                 number_of_games=10,
-                 animation_wait=0.001,
-                 player1=None,
-                 player2=None,
-                 ):
+    def __init__(
+        self,
+        initial_seeds=3,
+        number_of_games=10,
+        animation_wait=0.001,
+        player1=None,
+        player2=None,
+    ):
         self.term = Terminal()
 
         if number_of_games is None:
@@ -28,20 +28,22 @@ class Series:
         player_2_color = self.term.bold + self.term.blue
 
         if not player1:
-            player_class = GetUserInput('Enter player type for Player 1:',
-                                        PlayerFactory.all_classes()).get_response()
-            self.player1 = player_class('Player 1',
-                                        color=player_1_color,
-                                        wait_time=animation_wait)
+            player_class = GetUserInput(
+                'Enter player type for Player 1:', PlayerFactory.all_classes()
+            ).get_response()
+            self.player1 = player_class(
+                'Player 1', color=player_1_color, wait_time=animation_wait
+            )
         else:
             self.player1 = player1
 
         if not player2:
-            player_class = GetUserInput('Enter player type for Player 2:',
-                                        PlayerFactory.all_classes()).get_response()
-            self.player2 = player_class('Player 2',
-                                        color=player_2_color,
-                                        wait_time=animation_wait)
+            player_class = GetUserInput(
+                'Enter player type for Player 2:', PlayerFactory.all_classes()
+            ).get_response()
+            self.player2 = player_class(
+                'Player 2', color=player_2_color, wait_time=animation_wait
+            )
         else:
             self.player2 = player2
 

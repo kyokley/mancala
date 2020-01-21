@@ -1,14 +1,12 @@
 from src.terminal import Location, Terminal
 
-
 INITIAL_MENU_LOCATION = Location(5, 5)
 
 
 class GetUserInput:
-    def __init__(self,
-                 prompt,
-                 choices=None,
-                 ):
+    def __init__(
+        self, prompt, choices=None,
+    ):
         self.term = Terminal()
         self.prompt = prompt
         self.choices = list(choices) if choices else None
