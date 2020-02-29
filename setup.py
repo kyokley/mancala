@@ -19,7 +19,7 @@ setup(
     install_requires=['blessings', 'tabulate'],
     tests_require=['pytest', 'black', 'bpython', 'isort'],
     entry_points={
-        'console_scripts': ['mancala=src.game:main', 'mancala_series=src.series:main']
+        'console_scripts': ['mancala=src.game:main', 'mancala-series=src.series:main']
     },
     zip_safe=False,
 )
