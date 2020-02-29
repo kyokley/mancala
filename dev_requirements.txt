@@ -1,9 +1,0 @@
--r base_requirements.txt
-pytest
-pytest-mock
-black
-isort
-bpython
-pdbpp
-pytest-factoryboy
-flake8
