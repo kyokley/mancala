@@ -13,12 +13,14 @@ From inside a virtualenv, run the following:
 pip install git+https://github.com/kyokley/mancala/
 ```
 
+Alternatively, if you are running docker, and have make installed, you may simply run `make build`.
+
 ## Playing the Game
 
 ### Single Game
 
 #### Getting Started
-After installing, a new game can be started by entering `mancala` at the prompt. You will then be asked for the number of seeds per cup to begin the game with. Once this value has been provided, the game begins.
+After installing, a new game can be started by entering `mancala` (or `mancala-series` to run multiple games) at the prompt. You will then be asked for the number of seeds per cup to begin the game with. Once this value has been provided, the game begins.
 
 #### Objective
 Player 1 will attempt to collect seeds in the leftmost cup while Player 2 will attempt the same in the rightmost cup. The player with the most seeds in their cup at the end of the game is the winner. The game is over when all seeds have been moved to either Player 1 or Player 2's cups.

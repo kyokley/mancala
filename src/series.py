@@ -85,9 +85,9 @@ def main():
     if len(sys.argv) == 2:
         number_of_games = int(sys.argv[1])
 
-    series = Series(number_of_games=number_of_games, animation_wait=0.25,)
-
     try:
+        series = Series(number_of_games=number_of_games, animation_wait=0.25)
+
         series.run_games()
         series.final_results()
     except KeyboardInterrupt:
