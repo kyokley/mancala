@@ -1,28 +1,31 @@
-.PHONY: autoformat tests
+.PHONY: publish game run build-dev build tests autoformat shell
 
-autoformat:
-	docker run --rm -it -v $$(pwd):/code kyokley/mancala /bin/bash -c " \
+autoformat: build-dev
+	docker run --rm -it -v $$(pwd):/workspace kyokley/mancala /bin/bash -c " \
 	git ls-files | grep -P '\.py$$' | xargs isort && \
 	git ls-files | grep -P '\.py$$' | xargs black -S && \
 	"
 
-tests:
-	docker run --rm -it -v $$(pwd):/code kyokley/mancala /bin/bash -c " \
+tests: build-dev
+	docker run --rm -it -v $$(pwd):/workspace kyokley/mancala /bin/bash -c " \
 	pytest && \
 	git ls-files | grep -P '\.py$$' | xargs black -S --check && \
 	git ls-files | grep -P '\.py$$' | xargs flake8 --select F821,F401 \
 	"
 
 build:
-	docker build --target=prod -t kyokley/mancala .
+	DOCKER_BUILDKIT=1 docker build --target=prod -t kyokley/mancala .
 
 build-dev:
-	docker build --target=dev -t kyokley/mancala .
+	DOCKER_BUILDKIT=1 docker build --target=dev -t kyokley/mancala .
 
 run:
-	docker run --rm -it -v $$(pwd):/code kyokley/mancala
+	docker run --rm -it -v $$(pwd):/workspace kyokley/mancala
 
 game: run
 
 publish: build
 	docker push kyokley/mancala
+
+shell:
+	docker run --rm -it -v $$(pwd):/workspace kyokley/mancala /bin/bash
