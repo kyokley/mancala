@@ -14,10 +14,10 @@ tests: build-dev
 	"
 
 build:
-	DOCKER_BUILDKIT=1 docker build --target=prod -t kyokley/mancala .
+	docker build --target=prod -t kyokley/mancala .
 
 build-dev:
-	DOCKER_BUILDKIT=1 docker build --target=dev -t kyokley/mancala .
+	docker build --target=dev -t kyokley/mancala .
 
 run:
 	docker run --rm -it -v $$(pwd):/workspace kyokley/mancala
