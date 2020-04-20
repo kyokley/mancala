@@ -6,6 +6,10 @@ from enum import Enum, IntEnum
 from src.terminal import Location, Terminal
 
 
+RANDOM_PLAYER_WAIT_TIME = 0.5
+rand = random.SystemRandom()
+
+
 class NoGameInProgress(Exception):
     pass
 
@@ -21,10 +25,6 @@ class PlayerType(Enum):
     Random = 'random'
     ImprovedRandom = 'improved_random'
     Defensive = 'defensive'
-
-
-RANDOM_PLAYER_WAIT_TIME = 0.5
-rand = random.SystemRandom()
 
 
 class Player:
