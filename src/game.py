@@ -1,14 +1,15 @@
 from src.board import Board, EmptyCup, InvalidCup
-from src.player import DefensivePlayer, HumanPlayer, ImprovedRandomPlayer, Result
+from src.player import Result
 from src.terminal import Location, Terminal
 
 
 class Game:
     def __init__(
         self,
+        *,
+        player1,
+        player2,
         side_length=6,
-        player1=None,
-        player2=None,
         initial_seeds=None,
         player_1_color=None,
         player_2_color=None,
@@ -35,12 +36,8 @@ class Game:
             animation_wait=animation_wait,
         )
 
-        self.player1 = player1 or DefensivePlayer(
-            'Player1', board=self.board, wait_time=animation_wait, color=player_1_color
-        )
-        self.player2 = player2 or ImprovedRandomPlayer(
-            'Player2', board=self.board, wait_time=animation_wait, color=player_2_color
-        )
+        self.player1 = player1
+        self.player2 = player2
 
         self.board.assign_player(self.player1)
         self.board.assign_player(self.player2)
@@ -98,18 +95,3 @@ class Game:
         elif self.current_player == self.player2:
             if last_cup != self.board.player_2_cup_index:
                 self.current_player = self.player1
-
-
-def main():
-    player1 = DefensivePlayer('Player1',)
-    player2 = HumanPlayer('Player2',)
-    game = Game(player1=player1, player2=player2)
-
-    try:
-        game.run()
-    except KeyboardInterrupt:
-        pass
-
-
-if __name__ == '__main__':
-    main()

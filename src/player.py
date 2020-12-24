@@ -69,7 +69,7 @@ class Player:
         self.board = None
 
     @property
-    def games_player(self):
+    def games_played(self):
         return self.wins + self.losses + self.ties
 
     @property
