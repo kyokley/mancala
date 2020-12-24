@@ -3,7 +3,7 @@
 autoformat: build-dev
 	docker run --rm -it -v $$(pwd):/workspace kyokley/mancala /bin/bash -c " \
 	git ls-files | grep -P '\.py$$' | xargs isort && \
-	git ls-files | grep -P '\.py$$' | xargs black -S && \
+	git ls-files | grep -P '\.py$$' | xargs black -S \
 	"
 
 tests: build-dev

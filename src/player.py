@@ -5,7 +5,6 @@ from enum import Enum, IntEnum
 
 from src.terminal import Location, Terminal
 
-
 RANDOM_PLAYER_WAIT_TIME = 0.5
 rand = random.SystemRandom()
 
