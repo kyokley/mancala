@@ -92,6 +92,17 @@ class Board:
         if player2:
             self.assign_player(player2)
 
+    def deep_copy(self):
+        new_board = self.__class__(self.side_length,
+                                   animation_wait=self._ANIMATION_WAIT,
+                                   seed_color=self._SEED_COLOR,
+                                   index_color=self._INDEX_COLOR,
+                                   player1=self.player1.deep_copy(),
+                                   player2=self.player2.deep_copy(),
+                                   )
+        new_board.cups = self.cups.copy()
+        return new_board
+
     @property
     def ready_to_play(self):
         return len(self.players) == 2
@@ -235,33 +246,44 @@ class Board:
 
             self.cups[i] = int(seeds)
 
-    def sow(self, cup, color=None):
+    def sow_by_index(self, idx, color=None, animate=True):
+        return self.sow(self.index_to_cup[idx],
+                        color=color,
+                        animate=animate)
+
+    def sow(self, cup, color=None, animate=True):
         if cup not in self.cup_to_index:
             raise InvalidCup(f'Invalid cup. Got {cup}.')
 
-        self.clear_indicators()
+        if animate:
+            self.clear_indicators()
         index = self.cup_to_index[cup]
         seeds = self.cups[index]
 
         if seeds == 0:
             raise EmptyCup(f"Cup '{cup}' is empty.")
 
-        self._draw_indicator(index, color=color)
-        print()
+        if animate:
+            self._draw_indicator(index, color=color)
+            print()
+
         self.cups[index] = 0
-        self.display_cups()
-        time.sleep(self._ANIMATION_WAIT)
+
+        if animate:
+            self.display_cups()
+            time.sleep(self._ANIMATION_WAIT)
 
         while seeds:
             index += 1
             self.cups[index % len(self.cups)] += 1
             seeds -= 1
-            self.clear_board()
-            self.display_cups()
-            self._draw_indicator(index % len(self.cups), color=color)
+            if animate:
+                self.clear_board()
+                self.display_cups()
+                self._draw_indicator(index % len(self.cups), color=color)
 
-            print()
-            time.sleep(self._ANIMATION_WAIT)
+                print()
+                time.sleep(self._ANIMATION_WAIT)
 
         return index % len(self.cups)
 

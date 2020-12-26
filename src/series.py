@@ -32,7 +32,7 @@ class Series:
                 'Enter player type for Player 1:', PlayerFactory.all_classes()
             ).get_response()
             self.player1 = player_class(
-                'Player 1', color=player_1_color, wait_time=animation_wait
+                'Player 1', color=player_1_color
             )
         else:
             self.player1 = player1
@@ -42,7 +42,7 @@ class Series:
                 'Enter player type for Player 2:', PlayerFactory.all_classes()
             ).get_response()
             self.player2 = player_class(
-                'Player 2', color=player_2_color, wait_time=animation_wait
+                'Player 2', color=player_2_color
             )
         else:
             self.player2 = player2
