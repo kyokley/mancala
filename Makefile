@@ -8,7 +8,7 @@ autoformat: build-dev
 
 tests: build-dev test-pytest check-formatting
 
-test-pytest:
+test-pytest: build-dev
 	docker run --rm -t -v $$(pwd):/workspace kyokley/mancala /bin/bash -c "pytest"
 
 check-formatting: build-dev
