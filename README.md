@@ -1,4 +1,4 @@
-# Mancala: The Game [![Build Status](https://travis-ci.org/kyokley/mancala.svg?branch=master)](https://travis-ci.org/kyokley/mancala)
+# Mancala: The Game ![Test](https://github.com/kyokley/mancala/workflows/Test/badge.svg)
 
 ![Screenshot](/../screenshot/screenshots/game.gif?raw=true)
 
