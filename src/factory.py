@@ -2,9 +2,9 @@ from src.player import (
     DefensivePlayer,
     HumanPlayer,
     ImprovedRandomPlayer,
+    MinimaxPlayer,
     PlayerType,
     RandomPlayer,
-    MinimaxPlayer,
 )
 
 

@@ -93,13 +93,14 @@ class Board:
             self.assign_player(player2)
 
     def deep_copy(self):
-        new_board = self.__class__(self.side_length,
-                                   animation_wait=self._ANIMATION_WAIT,
-                                   seed_color=self._SEED_COLOR,
-                                   index_color=self._INDEX_COLOR,
-                                   player1=self.player1.deep_copy(),
-                                   player2=self.player2.deep_copy(),
-                                   )
+        new_board = self.__class__(
+            self.side_length,
+            animation_wait=self._ANIMATION_WAIT,
+            seed_color=self._SEED_COLOR,
+            index_color=self._INDEX_COLOR,
+            player1=self.player1.deep_copy(),
+            player2=self.player2.deep_copy(),
+        )
         new_board.cups = self.cups.copy()
         return new_board
 
@@ -247,9 +248,7 @@ class Board:
             self.cups[i] = int(seeds)
 
     def sow_by_index(self, idx, color=None, animate=True):
-        return self.sow(self.index_to_cup[idx],
-                        color=color,
-                        animate=animate)
+        return self.sow(self.index_to_cup[idx], color=color, animate=animate)
 
     def sow(self, cup, color=None, animate=True):
         if cup not in self.cup_to_index:

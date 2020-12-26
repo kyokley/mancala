@@ -40,9 +40,7 @@ class Player:
         self.ties = 0
 
     def deep_copy(self):
-        new_player = self.__class__(self.name,
-                                    board=self.board,
-                                    color=self.color)
+        new_player = self.__class__(self.name, board=self.board, color=self.color)
         return new_player
 
     def _take_turn(self):
@@ -98,9 +96,7 @@ class Player:
 
 class HumanPlayer(Player):
     def __init__(self, name, board=None, color=None):
-        super().__init__(
-            name, board=board, color=color
-        )
+        super().__init__(name, board=board, color=color)
 
     def take_turn(self):
         cup = input('Enter cup to sow: ')
@@ -368,41 +364,49 @@ class DefensivePlayer(ImprovedRandomPlayer):
         return next_move
 
 
-BoardWeights = namedtuple('BoardWeight',
-                          ['banked_player_seeds',
-                           'filled_player_cups',
-                           'filled_opponent_cups',
-                           'player_extra_move_cups',
-                           'opponent_extra_move_cups',
-                           ])
+BoardWeights = namedtuple(
+    'BoardWeight',
+    [
+        'banked_player_seeds',
+        'filled_player_cups',
+        'filled_opponent_cups',
+        'player_extra_move_cups',
+        'opponent_extra_move_cups',
+    ],
+)
 
 
-BoardCounts = namedtuple('BoardCount',
-                         ['banked_player_seeds',
-                          'filled_player_cups',
-                          'filled_opponent_cups',
-                          'player_extra_move_cups',
-                          'opponent_extra_move_cups',
-                          ])
+BoardCounts = namedtuple(
+    'BoardCount',
+    [
+        'banked_player_seeds',
+        'filled_player_cups',
+        'filled_opponent_cups',
+        'player_extra_move_cups',
+        'opponent_extra_move_cups',
+    ],
+)
 
 
 class MinimaxPlayer(Player):
     def __init__(self, name, board=None, color=None):
         super().__init__(name, board=board, color=color)
 
-        self.board_weights = BoardWeights(banked_player_seeds=1,
-                                          filled_player_cups=.12,
-                                          filled_opponent_cups=-.12,
-                                          player_extra_move_cups=25,
-                                          opponent_extra_move_cups=-35,
-                                          )
+        self.board_weights = BoardWeights(
+            banked_player_seeds=1,
+            filled_player_cups=0.12,
+            filled_opponent_cups=-0.12,
+            player_extra_move_cups=25,
+            opponent_extra_move_cups=-35,
+        )
         self.look_ahead = 4
 
     def take_turn(self):
         ref_board = self.board.deep_copy()
-        best_score, cup = self.score_board(ref_board,
-                                           look_ahead=self.look_ahead,
-                                           )
+        best_score, cup = self.score_board(
+            ref_board,
+            look_ahead=self.look_ahead,
+        )
         return cup
 
     def score_board(self, ref_board, look_ahead=0, opponent_turn=False):
@@ -414,11 +418,33 @@ class MinimaxPlayer(Player):
             else:
                 banked_player_seeds = 0
 
-            filled_player_cups = sum(1 for idx in ref_board.bottom_row_indices if ref_board.cups[idx] > 0 and (ref_board.cups[idx] + idx) % len(ref_board.cups) >= ref_board.player_2_cup_index)
-            filled_opponent_cups = sum(1 for idx in ref_board.top_row_indices if ref_board.cups[idx] > 0 and (ref_board.cups[idx] + idx) % len(ref_board.cups) <= ref_board.player_2_cup_index)
+            filled_player_cups = sum(
+                1
+                for idx in ref_board.bottom_row_indices
+                if ref_board.cups[idx] > 0
+                and (ref_board.cups[idx] + idx) % len(ref_board.cups)
+                >= ref_board.player_2_cup_index
+            )
+            filled_opponent_cups = sum(
+                1
+                for idx in ref_board.top_row_indices
+                if ref_board.cups[idx] > 0
+                and (ref_board.cups[idx] + idx) % len(ref_board.cups)
+                <= ref_board.player_2_cup_index
+            )
 
-            player_extra_move_cups = sum(1 for idx in ref_board.bottom_row_indices if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups) == ref_board.player_1_cup_index)
-            opponent_extra_move_cups = sum(1 for idx in ref_board.top_row_indices if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups) == ref_board.player_2_cup_index)
+            player_extra_move_cups = sum(
+                1
+                for idx in ref_board.bottom_row_indices
+                if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups)
+                == ref_board.player_1_cup_index
+            )
+            opponent_extra_move_cups = sum(
+                1
+                for idx in ref_board.top_row_indices
+                if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups)
+                == ref_board.player_2_cup_index
+            )
         else:
             if ref_board.player_1_cup < ref_board.player_2_cup:
                 banked_player_seeds = 1
@@ -427,18 +453,44 @@ class MinimaxPlayer(Player):
             else:
                 banked_player_seeds = 0
 
-            filled_player_cups = sum(1 for idx in ref_board.top_row_indices if ref_board.cups[idx] > 0 and (ref_board.cups[idx] + idx) % len(ref_board.cups) <= ref_board.player_2_cup_index)
-            filled_opponent_cups = sum(1 for idx in ref_board.bottom_row_indices if ref_board.cups[idx] > 0 and (ref_board.cups[idx] + idx) % len(ref_board.cups) >= ref_board.player_2_cup_index)
+            filled_player_cups = sum(
+                1
+                for idx in ref_board.top_row_indices
+                if ref_board.cups[idx] > 0
+                and (ref_board.cups[idx] + idx) % len(ref_board.cups)
+                <= ref_board.player_2_cup_index
+            )
+            filled_opponent_cups = sum(
+                1
+                for idx in ref_board.bottom_row_indices
+                if ref_board.cups[idx] > 0
+                and (ref_board.cups[idx] + idx) % len(ref_board.cups)
+                >= ref_board.player_2_cup_index
+            )
 
-            player_extra_move_cups = sum(1 for idx in ref_board.top_row_indices if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups) == ref_board.player_2_cup_index)
-            opponent_extra_move_cups = sum(1 for idx in ref_board.bottom_row_indices if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups) == ref_board.player_1_cup_index)
+            player_extra_move_cups = sum(
+                1
+                for idx in ref_board.top_row_indices
+                if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups)
+                == ref_board.player_2_cup_index
+            )
+            opponent_extra_move_cups = sum(
+                1
+                for idx in ref_board.bottom_row_indices
+                if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups)
+                == ref_board.player_1_cup_index
+            )
 
-        board_counts = BoardCounts(banked_player_seeds=banked_player_seeds,
-                                   filled_player_cups=filled_player_cups,
-                                   filled_opponent_cups=filled_opponent_cups,
-                                   player_extra_move_cups=player_extra_move_cups,
-                                   opponent_extra_move_cups=opponent_extra_move_cups)
-        score = sum(count * weight for count, weight in zip(board_counts, self.board_weights))
+        board_counts = BoardCounts(
+            banked_player_seeds=banked_player_seeds,
+            filled_player_cups=filled_player_cups,
+            filled_opponent_cups=filled_opponent_cups,
+            player_extra_move_cups=player_extra_move_cups,
+            opponent_extra_move_cups=opponent_extra_move_cups,
+        )
+        score = sum(
+            count * weight for count, weight in zip(board_counts, self.board_weights)
+        )
 
         if look_ahead == 0:
             return score, None
@@ -446,7 +498,9 @@ class MinimaxPlayer(Player):
             best_cup_idx = None
             best_score = None
 
-            for idx in itertools.chain(ref_board.top_row_indices, ref_board.bottom_row_indices):
+            for idx in itertools.chain(
+                ref_board.top_row_indices, ref_board.bottom_row_indices
+            ):
                 if ref_board.cup_seeds_by_index(idx) == 0:
                     continue
 
@@ -454,15 +508,28 @@ class MinimaxPlayer(Player):
                 last_idx = new_board.sow_by_index(idx, animate=False)
 
                 if not opponent_turn:
-                    player_cup_idx = new_board.player_1_cup_index if self.is_player1 else new_board.player_2_cup_index
+                    player_cup_idx = (
+                        new_board.player_1_cup_index
+                        if self.is_player1
+                        else new_board.player_2_cup_index
+                    )
                     if last_idx == player_cup_idx:
-                        current_score = score + self.score_board(new_board,
-                                                                 look_ahead=look_ahead - 1,
-                                                                 opponent_turn=False)[0] + 1000
+                        current_score = (
+                            score
+                            + self.score_board(
+                                new_board,
+                                look_ahead=look_ahead - 1,
+                                opponent_turn=False,
+                            )[0]
+                            + 1000
+                        )
                     else:
-                        current_score = score + self.score_board(new_board,
-                                                                 look_ahead=look_ahead - 1,
-                                                                 opponent_turn=True)[0]
+                        current_score = (
+                            score
+                            + self.score_board(
+                                new_board, look_ahead=look_ahead - 1, opponent_turn=True
+                            )[0]
+                        )
 
                     replace = False
                     if best_score is not None:
@@ -476,15 +543,28 @@ class MinimaxPlayer(Player):
                         best_cup_idx = idx
                         best_score = current_score
                 else:
-                    player_cup_idx = new_board.player_2_cup_index if self.is_player1 else new_board.player_1_cup_index
+                    player_cup_idx = (
+                        new_board.player_2_cup_index
+                        if self.is_player1
+                        else new_board.player_1_cup_index
+                    )
                     if last_idx == player_cup_idx:
-                        current_score = score + self.score_board(new_board,
-                                                                 look_ahead=look_ahead - 1,
-                                                                 opponent_turn=True)[0] - 50
+                        current_score = (
+                            score
+                            + self.score_board(
+                                new_board, look_ahead=look_ahead - 1, opponent_turn=True
+                            )[0]
+                            - 50
+                        )
                     else:
-                        current_score = score + self.score_board(new_board,
-                                                                 look_ahead=look_ahead - 1,
-                                                                 opponent_turn=False)[0]
+                        current_score = (
+                            score
+                            + self.score_board(
+                                new_board,
+                                look_ahead=look_ahead - 1,
+                                opponent_turn=False,
+                            )[0]
+                        )
 
                     if best_score is None or current_score < best_score:
                         best_cup_idx = idx
