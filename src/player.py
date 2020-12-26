@@ -409,7 +409,7 @@ class MinimaxPlayer(Player):
         )
         return cup
 
-    def score_board(self, ref_board, look_ahead=0, opponent_turn=False):
+    def _score_current_board(self, ref_board):
         if self.is_player1:
             if ref_board.player_1_cup > ref_board.player_2_cup:
                 banked_player_seeds = 1
@@ -491,86 +491,93 @@ class MinimaxPlayer(Player):
         score = sum(
             count * weight for count, weight in zip(board_counts, self.board_weights)
         )
+        return score
+
+    def _score_future_boards(self, ref_board, look_ahead, opponent_turn):
+        best_cup_idx = None
+        best_score = None
+
+        for idx in itertools.chain(
+            ref_board.top_row_indices, ref_board.bottom_row_indices
+        ):
+            if ref_board.cup_seeds_by_index(idx) == 0:
+                continue
+
+            new_board = ref_board.deep_copy()
+            last_idx = new_board.sow_by_index(idx, animate=False)
+
+            if not opponent_turn:
+                player_cup_idx = (
+                    new_board.player_1_cup_index
+                    if self.is_player1
+                    else new_board.player_2_cup_index
+                )
+                if last_idx == player_cup_idx:
+                    current_score = (
+                        self.score_board(
+                            new_board,
+                            look_ahead=look_ahead - 1,
+                            opponent_turn=False,
+                        )[0]
+                        + 1000
+                    )
+                else:
+                    current_score = (
+                        self.score_board(
+                            new_board, look_ahead=look_ahead - 1, opponent_turn=True
+                        )[0]
+                    )
+
+                replace = False
+                if best_score is not None:
+                    if current_score > best_score:
+                        replace = True
+                    elif current_score == best_score:
+                        if rand.choice([True, False]):
+                            replace = True
+
+                if best_score is None or replace:
+                    best_cup_idx = idx
+                    best_score = current_score
+            else:
+                player_cup_idx = (
+                    new_board.player_2_cup_index
+                    if self.is_player1
+                    else new_board.player_1_cup_index
+                )
+                if last_idx == player_cup_idx:
+                    current_score = (
+                        self.score_board(
+                            new_board, look_ahead=look_ahead - 1, opponent_turn=True
+                        )[0]
+                        - 50
+                    )
+                else:
+                    current_score = (
+                        self.score_board(
+                            new_board,
+                            look_ahead=look_ahead - 1,
+                            opponent_turn=False,
+                        )[0]
+                    )
+
+                if best_score is None or current_score < best_score:
+                    best_cup_idx = idx
+                    best_score = current_score
+        return best_score, best_cup_idx
+
+    def score_board(self, ref_board, look_ahead=0, opponent_turn=False):
+        score = self._score_current_board(ref_board)
 
         if look_ahead == 0:
             return score, None
         else:
-            best_cup_idx = None
-            best_score = None
+            best_future_score, best_future_cup_index = self._score_future_boards(
+                ref_board,
+                look_ahead,
+                opponent_turn)
 
-            for idx in itertools.chain(
-                ref_board.top_row_indices, ref_board.bottom_row_indices
-            ):
-                if ref_board.cup_seeds_by_index(idx) == 0:
-                    continue
-
-                new_board = ref_board.deep_copy()
-                last_idx = new_board.sow_by_index(idx, animate=False)
-
-                if not opponent_turn:
-                    player_cup_idx = (
-                        new_board.player_1_cup_index
-                        if self.is_player1
-                        else new_board.player_2_cup_index
-                    )
-                    if last_idx == player_cup_idx:
-                        current_score = (
-                            score
-                            + self.score_board(
-                                new_board,
-                                look_ahead=look_ahead - 1,
-                                opponent_turn=False,
-                            )[0]
-                            + 1000
-                        )
-                    else:
-                        current_score = (
-                            score
-                            + self.score_board(
-                                new_board, look_ahead=look_ahead - 1, opponent_turn=True
-                            )[0]
-                        )
-
-                    replace = False
-                    if best_score is not None:
-                        if current_score > best_score:
-                            replace = True
-                        elif current_score == best_score:
-                            if rand.choice([True, False]):
-                                replace = True
-
-                    if best_score is None or replace:
-                        best_cup_idx = idx
-                        best_score = current_score
-                else:
-                    player_cup_idx = (
-                        new_board.player_2_cup_index
-                        if self.is_player1
-                        else new_board.player_1_cup_index
-                    )
-                    if last_idx == player_cup_idx:
-                        current_score = (
-                            score
-                            + self.score_board(
-                                new_board, look_ahead=look_ahead - 1, opponent_turn=True
-                            )[0]
-                            - 50
-                        )
-                    else:
-                        current_score = (
-                            score
-                            + self.score_board(
-                                new_board,
-                                look_ahead=look_ahead - 1,
-                                opponent_turn=False,
-                            )[0]
-                        )
-
-                    if best_score is None or current_score < best_score:
-                        best_cup_idx = idx
-                        best_score = current_score
-
-            if best_cup_idx:
-                return best_score, ref_board.index_to_cup[best_cup_idx]
+            if best_future_cup_index is not None:
+                return best_future_score + score, ref_board.index_to_cup[best_future_cup_index]
             else:
                 return score, None
