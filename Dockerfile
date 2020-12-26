@@ -13,7 +13,7 @@ RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poet
 WORKDIR /workspace
 COPY pyproject.toml poetry.lock ./
 
-RUN poetry install --no-dev
+RUN pip install -U pip setuptools && poetry install --no-dev
 
 FROM build AS prod
 COPY . /workspace

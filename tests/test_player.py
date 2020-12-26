@@ -13,11 +13,11 @@ class TestDefensiveMove:
 
     def test_move1(self):
         """
-              a   b   c   d   e   f
-              0   3   3   0   1   1
-          0                           0
-              0   0   0   0   0   0
-              g   h   i   j   k   l
+            a   b   c   d   e   f
+            0   3   3   0   1   1
+        0                           0
+            0   0   0   0   0   0
+            g   h   i   j   k   l
         """
         self.board.cups[1] = 0
         self.board.cups[2] = 3
@@ -31,11 +31,11 @@ class TestDefensiveMove:
 
     def test_move2(self):
         """
-              a   b   c   d   e   f
-              0   2   4   3   1   1
-          0                           0
-              0   0   0   0   0   0
-              g   h   i   j   k   l
+            a   b   c   d   e   f
+            0   2   4   3   1   1
+        0                           0
+            0   0   0   0   0   0
+            g   h   i   j   k   l
         """
         self.board.cups[1] = 0
         self.board.cups[2] = 2
@@ -58,11 +58,11 @@ class TestScoreMoves:
 
     def test_move1(self):
         """
-              a   b   c   d   e   f
-              1   2   3   0   1   0
-          0                           0
-              7   1   2   3   1   7
-              g   h   i   j   k   l
+            a   b   c   d   e   f
+            1   2   3   0   1   0
+        0                           0
+            7   1   2   3   1   7
+            g   h   i   j   k   l
         """
         # Top Rows
         self.board.cups[1] = 1
