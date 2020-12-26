@@ -1,16 +1,16 @@
-name: Test
+name: Lint
 on:
   pull_request:
   push: { branches: master }
 
 jobs:
-  test:
-    name: Run test suite
+  lint:
+    name: Run formatting checks
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Make tests
-      run: make test-pytest
+    - name: Check formatting
+      run: make check-formatting
