@@ -12,7 +12,10 @@ class TestBuildIndexDicts:
     def test_seven_cups(self):
         side_length = 7
         board = Board(
-            side_length, player1=self.player1, player2=self.player2, animation_wait=0,
+            side_length,
+            player1=self.player1,
+            player2=self.player2,
+            animation_wait=0,
         )
 
         expected_cup_to_index = {
@@ -62,7 +65,10 @@ class TestBuildIndexDicts:
     def test_six_cups(self):
         side_length = 6
         board = Board(
-            side_length, player1=self.player1, player2=self.player2, animation_wait=0,
+            side_length,
+            player1=self.player1,
+            player2=self.player2,
+            animation_wait=0,
         )
 
         expected_cup_to_index = {

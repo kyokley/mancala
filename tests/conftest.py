@@ -9,7 +9,9 @@ from tests.factories import PlayerFactory
 @pytest.fixture
 def basic_game_setup():
     def _basic_game_setup(
-        test_instance, player1=None, player2=None,
+        test_instance,
+        player1=None,
+        player2=None,
     ):
         test_instance.player1 = player1 or ImprovedRandomPlayer('Player1', wait_time=0)
         test_instance.player2 = player2 or ImprovedRandomPlayer('Player2', wait_time=0)

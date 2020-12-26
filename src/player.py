@@ -91,7 +91,10 @@ class Player:
 class HumanPlayer(Player):
     def __init__(self, name, board=None, color=None, wait_time=None):
         super().__init__(
-            name, board=board, color=color, wait_time=wait_time,
+            name,
+            board=board,
+            color=color,
+            wait_time=wait_time,
         )
         self.wait_time = None
 
