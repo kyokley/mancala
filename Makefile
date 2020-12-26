@@ -3,13 +3,13 @@
 autoformat: build-dev
 	docker run --rm -t -v $$(pwd):/workspace kyokley/mancala /bin/bash -c " \
 	git ls-files | grep -P '\.py$$' | xargs isort && \
-	git ls-files | grep -P '\.py$$' | xargs black -S \
+	git ls-files | grep -P '\.py$$' | xargs black \
 	"
 
 tests: build-dev
 	docker run --rm -t -v $$(pwd):/workspace kyokley/mancala /bin/bash -c " \
 	pytest && \
-	git ls-files | grep -P '\.py$$' | xargs black -S --check && \
+	git ls-files | grep -P '\.py$$' | xargs black --check && \
 	git ls-files | grep -P '\.py$$' | xargs flake8 --select F821,F401 \
 	"
 
