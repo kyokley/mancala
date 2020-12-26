@@ -1,7 +1,0 @@
-language: python
-addons:
-  apt:
-    packages:
-      - docker-ce
-script:
-  - make tests
