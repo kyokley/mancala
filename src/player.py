@@ -53,6 +53,7 @@ class Player:
 
         if cup is None:
             raise Exception('A cup must be returned by the user')
+        print(f'{self.color}{self.name}{self.term.normal} chooses {cup}')
         return cup
 
     def take_turn(self):
@@ -122,8 +123,6 @@ class RandomPlayer(Player):
         time.sleep(self.wait_time)
 
         cup = rand.choice(self._legal_cups)
-        print(f'{self.color}{self.name}{self.term.normal} chooses {cup}')
-        time.sleep(self.wait_time)
         return cup
 
 
@@ -157,8 +156,6 @@ class ImprovedRandomPlayer(RandomPlayer):
         else:
             next_move = rand.choice(self._legal_cups)
 
-        print(f'{self.color}{self.name}{self.term.normal} chooses {next_move}')
-        time.sleep(self.wait_time)
         return next_move
 
 
@@ -358,9 +355,6 @@ class DefensivePlayer(ImprovedRandomPlayer):
                         if move['score'] == max_score
                     ]
                 )
-
-        print(f'{self.color}{self.name}{self.term.normal} chooses {next_move}')
-        time.sleep(self.wait_time)
         return next_move
 
 
