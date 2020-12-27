@@ -43,7 +43,7 @@ class Series:
         else:
             self.player2 = player2
 
-    def run_games(self):
+    def run_games(self, animate=True):
         for idx in range(self.number_of_games):
             if idx % 2 == 0:
                 game = Game(
@@ -60,7 +60,7 @@ class Series:
                     animation_wait=self.animation_wait,
                 )
 
-            game.run()
+            game.run(animate=animate)
 
     def final_results(self):
         print()
@@ -84,7 +84,7 @@ def main():
     try:
         series = Series(number_of_games=number_of_games, animation_wait=0.25)
 
-        series.run_games()
+        series.run_games(animate=True)
         series.final_results()
     except KeyboardInterrupt:
         pass

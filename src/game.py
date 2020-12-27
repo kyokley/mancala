@@ -57,7 +57,7 @@ class Game:
     def clear_screen(self):
         self.term.clear()
 
-    def run(self):
+    def run(self, animate=True):
         self.clear_screen()
         while not self.board.done():
             self.board.clear_board()
@@ -65,7 +65,7 @@ class Game:
 
             try:
                 cup = self.current_player._take_turn()
-                last_cup = self.board.sow(cup, color=self.current_player.color)
+                last_cup = self.board.sow(cup, color=self.current_player.color, animate=animate)
             except (EmptyCup, InvalidCup):
                 continue
 
