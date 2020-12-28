@@ -506,11 +506,9 @@ class MinimaxPlayer(Player):
                         + 1000
                     )
                 else:
-                    current_score = (
-                        self.score_board(
-                            new_board, look_ahead=look_ahead - 1, opponent_turn=True
-                        )[0]
-                    )
+                    current_score = self.score_board(
+                        new_board, look_ahead=look_ahead - 1, opponent_turn=True
+                    )[0]
 
                 replace = False
                 if best_score is not None:
@@ -537,13 +535,11 @@ class MinimaxPlayer(Player):
                         - 50
                     )
                 else:
-                    current_score = (
-                        self.score_board(
-                            new_board,
-                            look_ahead=look_ahead - 1,
-                            opponent_turn=False,
-                        )[0]
-                    )
+                    current_score = self.score_board(
+                        new_board,
+                        look_ahead=look_ahead - 1,
+                        opponent_turn=False,
+                    )[0]
 
                 if best_score is None or current_score < best_score:
                     best_cup_idx = idx
@@ -557,11 +553,13 @@ class MinimaxPlayer(Player):
             return score, None
         else:
             best_future_score, best_future_cup_index = self._score_future_boards(
-                ref_board,
-                look_ahead,
-                opponent_turn)
+                ref_board, look_ahead, opponent_turn
+            )
 
             if best_future_cup_index is not None:
-                return best_future_score + score, ref_board.index_to_cup[best_future_cup_index]
+                return (
+                    best_future_score + score,
+                    ref_board.index_to_cup[best_future_cup_index],
+                )
             else:
                 return score, None

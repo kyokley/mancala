@@ -65,7 +65,9 @@ class Game:
 
             try:
                 cup = self.current_player._take_turn()
-                last_cup = self.board.sow(cup, color=self.current_player.color, animate=animate)
+                last_cup = self.board.sow(
+                    cup, color=self.current_player.color, animate=animate
+                )
             except (EmptyCup, InvalidCup):
                 continue
 
