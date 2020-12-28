@@ -387,9 +387,9 @@ class MinimaxPlayer(Player):
         super().__init__(name, board=board, color=color)
 
         self.board_weights = BoardWeights(
-            banked_player_seeds=1,
-            filled_player_cups=0.12,
-            filled_opponent_cups=-0.12,
+            banked_player_seeds=10,
+            filled_player_cups=1,
+            filled_opponent_cups=-1,
             player_extra_move_cups=25,
             opponent_extra_move_cups=-35,
         )
@@ -405,12 +405,7 @@ class MinimaxPlayer(Player):
 
     def _score_current_board(self, ref_board):
         if self.is_player1:
-            if ref_board.player_1_cup > ref_board.player_2_cup:
-                banked_player_seeds = 1
-            elif ref_board.player_1_cup < ref_board.player_2_cup:
-                banked_player_seeds = -1
-            else:
-                banked_player_seeds = 0
+            banked_player_seeds = ref_board.player_1_cup - ref_board.player_2_cup
 
             filled_player_cups = sum(
                 1
@@ -440,12 +435,7 @@ class MinimaxPlayer(Player):
                 == ref_board.player_2_cup_index
             )
         else:
-            if ref_board.player_1_cup < ref_board.player_2_cup:
-                banked_player_seeds = 1
-            elif ref_board.player_1_cup > ref_board.player_2_cup:
-                banked_player_seeds = -1
-            else:
-                banked_player_seeds = 0
+            banked_player_seeds = ref_board.player_2_cup - ref_board.player_1_cup
 
             filled_player_cups = sum(
                 1
