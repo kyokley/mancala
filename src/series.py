@@ -64,12 +64,19 @@ class Series:
 
     def final_results(self):
         print()
-        print(f'Player 1 ({self.player1.name}):')
+        if self.player1.wins > self.player2.wins:
+            print(f'{self.player1.name} wins the series!')
+        elif self.player1.wins < self.player2.wins:
+            print(f'{self.player2.name} wins the series!')
+        else:
+            print('Series ended in a tie')
+        print()
+        print(f'{self.player1.name}:')
         print(f'    Wins: {self.player1.wins}')
         print(f'    Losses: {self.player1.losses}')
         print(f'    Ties: {self.player1.ties}')
         print()
-        print(f'Player 2 ({self.player2.name}):')
+        print(f'{self.player2.name}:')
         print(f'    Wins: {self.player2.wins}')
         print(f'    Losses: {self.player2.losses}')
         print(f'    Ties: {self.player2.ties}')
