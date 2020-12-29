@@ -393,7 +393,7 @@ class MinimaxPlayer(Player):
             player_extra_move_cups=25,
             opponent_extra_move_cups=-35,
         )
-        self.look_ahead = 4
+        self.look_ahead = 5
 
     def take_turn(self):
         ref_board = self.board.deep_copy()
