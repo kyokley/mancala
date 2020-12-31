@@ -2,6 +2,7 @@ from src.player import (
     DefensivePlayer,
     HumanPlayer,
     ImprovedRandomPlayer,
+    MinimaxPlayer,
     PlayerType,
     RandomPlayer,
 )
@@ -30,3 +31,4 @@ PlayerFactory.register(PlayerType.Human, HumanPlayer)
 PlayerFactory.register(PlayerType.Random, RandomPlayer)
 PlayerFactory.register(PlayerType.ImprovedRandom, ImprovedRandomPlayer)
 PlayerFactory.register(PlayerType.Defensive, DefensivePlayer)
+PlayerFactory.register(PlayerType.Minimax, MinimaxPlayer)

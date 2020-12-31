@@ -31,9 +31,7 @@ class Series:
             player_class = GetUserInput(
                 'Enter player type for Player 1:', PlayerFactory.all_classes()
             ).get_response()
-            self.player1 = player_class(
-                'Player 1', color=player_1_color, wait_time=animation_wait
-            )
+            self.player1 = player_class('Player 1', color=player_1_color)
         else:
             self.player1 = player1
 
@@ -41,13 +39,11 @@ class Series:
             player_class = GetUserInput(
                 'Enter player type for Player 2:', PlayerFactory.all_classes()
             ).get_response()
-            self.player2 = player_class(
-                'Player 2', color=player_2_color, wait_time=animation_wait
-            )
+            self.player2 = player_class('Player 2', color=player_2_color)
         else:
             self.player2 = player2
 
-    def run_games(self):
+    def run_games(self, animate=True):
         for idx in range(self.number_of_games):
             if idx % 2 == 0:
                 game = Game(
@@ -64,16 +60,23 @@ class Series:
                     animation_wait=self.animation_wait,
                 )
 
-            game.run()
+            game.run(animate=animate)
 
     def final_results(self):
         print()
-        print(f'Player 1 ({self.player1.name}):')
+        if self.player1.wins > self.player2.wins:
+            print(f'{self.player1.name} wins the series!')
+        elif self.player1.wins < self.player2.wins:
+            print(f'{self.player2.name} wins the series!')
+        else:
+            print('Series ended in a tie')
+        print()
+        print(f'{self.player1.name}:')
         print(f'    Wins: {self.player1.wins}')
         print(f'    Losses: {self.player1.losses}')
         print(f'    Ties: {self.player1.ties}')
         print()
-        print(f'Player 2 ({self.player2.name}):')
+        print(f'{self.player2.name}:')
         print(f'    Wins: {self.player2.wins}')
         print(f'    Losses: {self.player2.losses}')
         print(f'    Ties: {self.player2.ties}')
@@ -88,7 +91,7 @@ def main():
     try:
         series = Series(number_of_games=number_of_games, animation_wait=0.25)
 
-        series.run_games()
+        series.run_games(animate=True)
         series.final_results()
     except KeyboardInterrupt:
         pass

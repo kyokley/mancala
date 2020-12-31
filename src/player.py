@@ -1,6 +1,7 @@
 import itertools
 import random
 import time
+from collections import namedtuple
 from enum import Enum, IntEnum
 
 from src.terminal import Location, Terminal
@@ -24,10 +25,11 @@ class PlayerType(Enum):
     Random = 'random'
     ImprovedRandom = 'improved_random'
     Defensive = 'defensive'
+    Minimax = 'minimax'
 
 
 class Player:
-    def __init__(self, name, board=None, color=None, wait_time=None):
+    def __init__(self, name, board=None, color=None):
         self.term = Terminal()
         self.name = f'{name} ({self.__class__.__name__})'
         self.board = board
@@ -36,6 +38,10 @@ class Player:
         self.wins = 0
         self.losses = 0
         self.ties = 0
+
+    def deep_copy(self):
+        new_player = self.__class__(self.name, board=self.board, color=self.color)
+        return new_player
 
     def _take_turn(self):
         if self.board is None:
@@ -47,6 +53,7 @@ class Player:
 
         if cup is None:
             raise Exception('A cup must be returned by the user')
+        print(f'{self.color}{self.name}{self.term.normal} chooses {cup}')
         return cup
 
     def take_turn(self):
@@ -89,14 +96,8 @@ class Player:
 
 
 class HumanPlayer(Player):
-    def __init__(self, name, board=None, color=None, wait_time=None):
-        super().__init__(
-            name,
-            board=board,
-            color=color,
-            wait_time=wait_time,
-        )
-        self.wait_time = None
+    def __init__(self, name, board=None, color=None):
+        super().__init__(name, board=board, color=color)
 
     def take_turn(self):
         cup = input('Enter cup to sow: ')
@@ -122,8 +123,6 @@ class RandomPlayer(Player):
         time.sleep(self.wait_time)
 
         cup = rand.choice(self._legal_cups)
-        print(f'{self.color}{self.name}{self.term.normal} chooses {cup}')
-        time.sleep(self.wait_time)
         return cup
 
 
@@ -157,8 +156,6 @@ class ImprovedRandomPlayer(RandomPlayer):
         else:
             next_move = rand.choice(self._legal_cups)
 
-        print(f'{self.color}{self.name}{self.term.normal} chooses {next_move}')
-        time.sleep(self.wait_time)
         return next_move
 
 
@@ -358,7 +355,211 @@ class DefensivePlayer(ImprovedRandomPlayer):
                         if move['score'] == max_score
                     ]
                 )
-
-        print(f'{self.color}{self.name}{self.term.normal} chooses {next_move}')
-        time.sleep(self.wait_time)
         return next_move
+
+
+BoardWeights = namedtuple(
+    'BoardWeight',
+    [
+        'banked_player_seeds',
+        'filled_player_cups',
+        'filled_opponent_cups',
+        'player_extra_move_cups',
+        'opponent_extra_move_cups',
+    ],
+)
+
+
+BoardCounts = namedtuple(
+    'BoardCount',
+    [
+        'banked_player_seeds',
+        'filled_player_cups',
+        'filled_opponent_cups',
+        'player_extra_move_cups',
+        'opponent_extra_move_cups',
+    ],
+)
+
+
+class MinimaxPlayer(Player):
+    def __init__(self, name, board=None, color=None):
+        super().__init__(name, board=board, color=color)
+
+        self.board_weights = BoardWeights(
+            banked_player_seeds=10,
+            filled_player_cups=1,
+            filled_opponent_cups=-1,
+            player_extra_move_cups=25,
+            opponent_extra_move_cups=-35,
+        )
+        self.look_ahead = 5
+
+    def take_turn(self):
+        ref_board = self.board.deep_copy()
+        best_score, cup = self.score_board(
+            ref_board,
+            look_ahead=self.look_ahead,
+        )
+        return cup
+
+    def _score_current_board(self, ref_board):
+        if self.is_player1:
+            banked_player_seeds = ref_board.player_1_cup - ref_board.player_2_cup
+
+            filled_player_cups = sum(
+                1
+                for idx in ref_board.bottom_row_indices
+                if ref_board.cups[idx] > 0
+                and (ref_board.cups[idx] + idx) % len(ref_board.cups)
+                >= ref_board.player_2_cup_index
+            )
+            filled_opponent_cups = sum(
+                1
+                for idx in ref_board.top_row_indices
+                if ref_board.cups[idx] > 0
+                and (ref_board.cups[idx] + idx) % len(ref_board.cups)
+                <= ref_board.player_2_cup_index
+            )
+
+            player_extra_move_cups = sum(
+                1
+                for idx in ref_board.bottom_row_indices
+                if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups)
+                == ref_board.player_1_cup_index
+            )
+            opponent_extra_move_cups = sum(
+                1
+                for idx in ref_board.top_row_indices
+                if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups)
+                == ref_board.player_2_cup_index
+            )
+        else:
+            banked_player_seeds = ref_board.player_2_cup - ref_board.player_1_cup
+
+            filled_player_cups = sum(
+                1
+                for idx in ref_board.top_row_indices
+                if ref_board.cups[idx] > 0
+                and (ref_board.cups[idx] + idx) % len(ref_board.cups)
+                <= ref_board.player_2_cup_index
+            )
+            filled_opponent_cups = sum(
+                1
+                for idx in ref_board.bottom_row_indices
+                if ref_board.cups[idx] > 0
+                and (ref_board.cups[idx] + idx) % len(ref_board.cups)
+                >= ref_board.player_2_cup_index
+            )
+
+            player_extra_move_cups = sum(
+                1
+                for idx in ref_board.top_row_indices
+                if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups)
+                == ref_board.player_2_cup_index
+            )
+            opponent_extra_move_cups = sum(
+                1
+                for idx in ref_board.bottom_row_indices
+                if (idx + ref_board.cup_seeds_by_index(idx)) % len(ref_board.cups)
+                == ref_board.player_1_cup_index
+            )
+
+        board_counts = BoardCounts(
+            banked_player_seeds=banked_player_seeds,
+            filled_player_cups=filled_player_cups,
+            filled_opponent_cups=filled_opponent_cups,
+            player_extra_move_cups=player_extra_move_cups,
+            opponent_extra_move_cups=opponent_extra_move_cups,
+        )
+        score = sum(
+            count * weight for count, weight in zip(board_counts, self.board_weights)
+        )
+        return score
+
+    def _score_future_boards(self, ref_board, look_ahead, opponent_turn):
+        best_cup_idx = None
+        best_score = None
+
+        for idx in itertools.chain(
+            ref_board.top_row_indices, ref_board.bottom_row_indices
+        ):
+            if ref_board.cup_seeds_by_index(idx) == 0:
+                continue
+
+            new_board = ref_board.deep_copy()
+            last_idx = new_board.sow_by_index(idx, animate=False)
+
+            if not opponent_turn:
+                player_cup_idx = (
+                    new_board.player_1_cup_index
+                    if self.is_player1
+                    else new_board.player_2_cup_index
+                )
+                if last_idx == player_cup_idx:
+                    current_score = (
+                        self.score_board(
+                            new_board,
+                            look_ahead=look_ahead - 1,
+                            opponent_turn=False,
+                        )[0]
+                        + 1000
+                    )
+                else:
+                    current_score = self.score_board(
+                        new_board, look_ahead=look_ahead - 1, opponent_turn=True
+                    )[0]
+
+                replace = False
+                if best_score is not None:
+                    if current_score > best_score:
+                        replace = True
+                    elif current_score == best_score:
+                        if rand.choice([True, False]):
+                            replace = True
+
+                if best_score is None or replace:
+                    best_cup_idx = idx
+                    best_score = current_score
+            else:
+                player_cup_idx = (
+                    new_board.player_2_cup_index
+                    if self.is_player1
+                    else new_board.player_1_cup_index
+                )
+                if last_idx == player_cup_idx:
+                    current_score = (
+                        self.score_board(
+                            new_board, look_ahead=look_ahead - 1, opponent_turn=True
+                        )[0]
+                        - 50
+                    )
+                else:
+                    current_score = self.score_board(
+                        new_board,
+                        look_ahead=look_ahead - 1,
+                        opponent_turn=False,
+                    )[0]
+
+                if best_score is None or current_score < best_score:
+                    best_cup_idx = idx
+                    best_score = current_score
+        return best_score, best_cup_idx
+
+    def score_board(self, ref_board, look_ahead=0, opponent_turn=False):
+        score = self._score_current_board(ref_board)
+
+        if look_ahead == 0:
+            return score, None
+        else:
+            best_future_score, best_future_cup_index = self._score_future_boards(
+                ref_board, look_ahead, opponent_turn
+            )
+
+            if best_future_cup_index is not None:
+                return (
+                    best_future_score + score,
+                    ref_board.index_to_cup[best_future_cup_index],
+                )
+            else:
+                return score, None
