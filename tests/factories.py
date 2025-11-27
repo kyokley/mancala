@@ -1,7 +1,7 @@
 import factory
 from faker import Factory as FakerFactory
 
-from src.player import Player
+from src.mancala.player import Player
 
 faker = FakerFactory.create()
 

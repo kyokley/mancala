@@ -1,6 +1,6 @@
 import pytest
 
-from src.player import DefensivePlayer
+from src.mancala.player import DefensivePlayer
 
 
 class TestDefensiveMove:

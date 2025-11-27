@@ -1,4 +1,4 @@
-from src.utils import generate_sequence
+from src.mancala.utils import generate_sequence
 
 
 class TestGenerateSequence:

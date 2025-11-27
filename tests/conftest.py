@@ -1,8 +1,8 @@
 import pytest
 from pytest_factoryboy import register
 
-from src.game import Game
-from src.player import ImprovedRandomPlayer
+from src.mancala.game import Game
+from src.mancala.player import ImprovedRandomPlayer
 from tests.factories import PlayerFactory
 
 

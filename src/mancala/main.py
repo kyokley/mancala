@@ -1,5 +1,5 @@
-from src.game import Game
-from src.player import DefensivePlayer, HumanPlayer, ImprovedRandomPlayer
+from src.mancala.game import Game
+from src.mancala.player import DefensivePlayer, HumanPlayer, ImprovedRandomPlayer
 
 
 def main():

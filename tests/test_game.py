@@ -1,13 +1,13 @@
 import pytest
 
-from src.game import Game
-from src.player import RandomPlayer
+from src.mancala.game import Game
+from src.mancala.player import RandomPlayer
 
 
 class TestDetermineNextPlayer:
     @pytest.fixture(autouse=True)
     def setUp(self, mocker):
-        mocker.patch('src.game.Game._get_initial_seeds', lambda x: 3)
+        mocker.patch('src.mancala.game.Game._get_initial_seeds', lambda x: 3)
         self.game = Game(
             player1=RandomPlayer('Player1'), player2=RandomPlayer('Player2')
         )

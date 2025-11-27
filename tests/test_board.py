@@ -1,6 +1,6 @@
 import pytest
 
-from src.board import Board, EmptyCup, InvalidCup
+from src.mancala.board import Board, EmptyCup, InvalidCup
 
 
 class TestBuildIndexDicts:
