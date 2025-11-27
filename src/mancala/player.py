@@ -3,9 +3,9 @@ import random
 import time
 from enum import Enum, IntEnum
 
-from src.terminal import Location, Terminal
+from src.mancala.terminal import Location, Terminal
 
-RANDOM_PLAYER_WAIT_TIME = 0.5
+RANDOM_PLAYER_WAIT_TIME = 0.25
 rand = random.SystemRandom()
 
 

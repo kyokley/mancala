@@ -1,9 +1,9 @@
 import sys
 
-from src.factory import PlayerFactory
-from src.game import Game
-from src.menu import GetUserInput
-from src.terminal import Terminal
+from src.mancala.factory import PlayerFactory
+from src.mancala.game import Game
+from src.mancala.menu import GetUserInput
+from src.mancala.terminal import Terminal
 
 
 class Series:

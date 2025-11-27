@@ -1,4 +1,4 @@
-from src.terminal import Location, Terminal
+from src.mancala.terminal import Location, Terminal
 
 INITIAL_MENU_LOCATION = Location(5, 5)
 

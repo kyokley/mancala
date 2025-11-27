@@ -1,4 +1,4 @@
-from src.player import (
+from src.mancala.player import (
     DefensivePlayer,
     HumanPlayer,
     ImprovedRandomPlayer,

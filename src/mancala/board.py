@@ -2,8 +2,8 @@ import itertools
 import time
 from collections import namedtuple
 
-from src.terminal import Location, Terminal
-from src.utils import generate_sequence
+from src.mancala.terminal import Location, Terminal
+from src.mancala.utils import generate_sequence
 
 Indicator = namedtuple('Indicator', 'location symbol')
 

@@ -23,8 +23,8 @@ dev = [
 ]
 
 [project.scripts]
-mancala = "src.main:main"
-mancala-series = "src.series:main"
+mancala = "src.mancala.main:main"
+mancala-series = "src.mancala.series:main"
 
 [build-system]
 requires = ["uv_build>=0.8.23,<0.9.0"]

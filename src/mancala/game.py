@@ -1,6 +1,6 @@
-from src.board import Board, EmptyCup, InvalidCup
-from src.player import Result
-from src.terminal import Location, Terminal
+from src.mancala.board import Board, EmptyCup, InvalidCup
+from src.mancala.player import Result
+from src.mancala.terminal import Location, Terminal
 
 
 class Game:
@@ -20,12 +20,12 @@ class Game:
         if player_1_color is None and player1.color is None:
             player1.color = self.term.bold + self.term.red
         else:
-            player1.color = player_1_color
+            player1.color = player_1_color or player1.color
 
         if player_2_color is None and player2.color is None:
             player2.color = self.term.bold + self.term.blue
         else:
-            player2.color = player_2_color
+            player2.color = player_2_color or player2.color
 
         seed_color = self.term.green
         index_color = self.term.yellow
