@@ -17,11 +17,15 @@ class Game:
     ):
         self.term = Terminal()
 
-        if player_1_color is None:
-            player_1_color = self.term.bold + self.term.red
+        if player_1_color is None and player1.color is None:
+            player1.color = self.term.bold + self.term.red
+        else:
+            player1.color = player_1_color
 
-        if player_2_color is None:
-            player_2_color = self.term.bold + self.term.blue
+        if player_2_color is None and player2.color is None:
+            player2.color = self.term.bold + self.term.blue
+        else:
+            player2.color = player_2_color
 
         seed_color = self.term.green
         index_color = self.term.yellow
