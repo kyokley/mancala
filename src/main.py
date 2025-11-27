@@ -1,9 +1,9 @@
 from src.game import Game
-from src.player import DefensivePlayer, HumanPlayer
+from src.player import DefensivePlayer, HumanPlayer, ImprovedRandomPlayer
 
 
 def main():
-    player1 = DefensivePlayer(
+    player1 = ImprovedRandomPlayer(
         'Player1',
     )
     player2 = HumanPlayer(

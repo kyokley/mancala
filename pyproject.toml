@@ -1,0 +1,31 @@
+[project]
+name = "mancala"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Kevin Yokley", email = "kyokley@mars" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "blessings>=1.7",
+    "tabulate>=0.9.0",
+]
+
+[dependency-groups]
+dev = [
+    "bpython>=0.26",
+    "isort>=7.0.0",
+    "pdbpp>=0.11.7",
+    "pytest>=9.0.1",
+    "pytest-factoryboy>=2.8.1",
+    "pytest-mock>=3.15.1",
+]
+
+[project.scripts]
+mancala = "src.main:main"
+mancala-series = "src.series:main"
+
+[build-system]
+requires = ["uv_build>=0.8.23,<0.9.0"]
+build-backend = "uv_build"

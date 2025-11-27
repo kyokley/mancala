@@ -5,6 +5,7 @@
   env = {
     GREET = "mancala";
     PC_CONFIG_FILES = [];
+    PYTHONPATH = ".";
   };
 
   # https://devenv.sh/packages/
